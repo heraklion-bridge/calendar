@@ -1,4 +1,13 @@
 import {
+  $,
+  esc,
+  monthLast,
+  setupCalendar,
+  displayEvent,
+  displayDay,
+} from "./view.js";
+import { loadPublished } from "./published.js";
+import {
   addDays,
   weekday,
   fmt,
@@ -12,29 +21,27 @@ import {
   sessions as expand,
 } from "./schedule.js";
 
+import { publication, validateDraft } from "../publication.js";
+import {
+  PAGES_ROOT,
+  parsePublic,
+  newSnapshot,
+  projectPublic,
+  sameSnapshot,
+  publicationLabel,
+} from "../snapshot.js";
+import {
+  blankState,
+  readBackup,
+  confirmedVersion,
+  openStorage,
+  storedState,
+  storeState,
+  MAX_PRIVATE_BYTES,
+} from "../private-state.js";
+
 (() => {
   "use strict";
-  const $ = (id) => document.getElementById(id),
-    esc = (s) =>
-      String(s ?? "").replace(
-        /[&<>"']/g,
-        (c) =>
-          ({
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#39;",
-          })[c],
-      );
-  const categories = {
-    reg: "Τακτικές",
-    special: "Έκτακτες",
-    lesson: "Μαθήματα",
-    external: "ΕΟΜ & άλλοι όμιλοι",
-    other: "Άλλες εκδηλώσεις",
-    holiday: "Αργίες",
-  };
   const types = {
     regular: "Τακτικός αγώνας",
     special: "Έκτακτη διοργάνωση",
@@ -64,32 +71,14 @@ import {
   const uid = () =>
     "r" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   let data = [],
-    publicEvents = [],
-    revision = null,
-    dirty = false,
-    previewToken = null,
-    busy = false;
-  let adminPreview = false,
-    savedNonYearFilters = null;
-  let view = "agenda",
-    active = "public",
+    publicEvents = [];
+  let adminPreview = false;
+  let active = "public",
     section = "new",
-    filter = new Set(Object.keys(categories)),
-    cursor = todayISO(),
     editing = null,
     editKind = "regular",
     sessionDates = [],
-    sessionTimes = [],
-    search = "";
-  function invalidatePreview() {
-    previewToken = null;
-    $("publish").disabled = true;
-  }
-  function persist() {
-    dirty = true;
-    invalidatePreview();
-    $("productionStatus").textContent = "Υπάρχουν αλλαγές προς αποθήκευση.";
-  }
+    sessionTimes = [];
   function toast(s) {
     $("toast").textContent = s;
     $("toast").classList.remove("hidden");
@@ -107,14 +96,25 @@ import {
   }
   const sessions = (r) => expand(r, data);
   const automaticHolidays = (y) => holidays(y, data);
+  const {
+    renderPublic,
+    filtered,
+    cursor: calendarCursor,
+  } = setupCalendar({
+    getEvents: allEvents,
+    editable: () => adminPreview,
+    cancelledRegular,
+    onEvent: showEvent,
+    onDay: showDay,
+  });
   function allEvents() {
     return !adminPreview
       ? publicEvents
       : [
           ...data,
-          ...automaticHolidays(+cursor.slice(0, 4) - 1),
-          ...automaticHolidays(+cursor.slice(0, 4)),
-          ...automaticHolidays(+cursor.slice(0, 4) + 1),
+          ...automaticHolidays(+calendarCursor().slice(0, 4) - 1),
+          ...automaticHolidays(+calendarCursor().slice(0, 4)),
+          ...automaticHolidays(+calendarCursor().slice(0, 4) + 1),
         ]
           .flatMap(sessions)
           .sort(
@@ -124,180 +124,13 @@ import {
               a.title.localeCompare(b.title, "el"),
           );
   }
-  function filtered() {
-    return allEvents().filter(
-      (e) =>
-        filter.has(e.category) &&
-        `${e.title} ${e.note} ${categories[e.category]}`
-          .toLocaleLowerCase("el")
-          .includes(search.toLocaleLowerCase("el")),
-    );
-  }
-  function detail(e) {
-    let bits = e.pending ? ["Σε εκκρεμότητα"] : [];
-    if (e.category === "reg")
-      bits.push(
-        e.independent
-          ? "Ανεξάρτητη ημερίδα"
-          : `${e.number}η / ${e.groupTotal} · ${e.group}ο πολυήμερο`,
-      );
-    if (e.simultaneous) bits.push("Ταυτόχρονο");
-    if (e.category === "special")
-      bits.push(
-        `${e.number}/${e.total} ημερίδα`,
-        e.grade && e.grade !== "Χωρίς βαθμίδα" ? `${e.grade} βαθμίδα` : "",
-      );
-    if (e.category === "lesson")
-      bits.push(`${e.cycleNumber}ο μάθημα · ${e.cycle}ος κύκλος`);
-    if (e.note) bits.push(e.note);
-    return bits.filter(Boolean).join(" · ");
-  }
   function showTab(t) {
-    if (t === "admin" && revision === null) return;
     active = t;
     $("public").classList.toggle("hidden", t !== "public");
     $("admin").classList.toggle("hidden", t !== "admin");
-    $("tabPublic").classList.toggle("active", t === "public");
+    $("draftView").classList.toggle("active", t === "public" && adminPreview);
     $("tabAdmin").classList.toggle("active", t === "admin");
     render();
-  }
-  function periodRange() {
-    const year = +cursor.slice(0, 4),
-      month = +cursor.slice(5, 7);
-    if (view === "year") return [year + "-01-01", year + "-12-31"];
-    if (view === "month")
-      return [
-        cursor.slice(0, 7) + "-01",
-        year +
-          "-" +
-          String(month).padStart(2, "0") +
-          "-" +
-          String(monthLast(year, month)).padStart(2, "0"),
-      ];
-    if (view === "week") {
-      const offset = (weekday(cursor) + 6) % 7;
-      const start = addDays(cursor, -offset);
-      return [start, addDays(start, 6)];
-    }
-    return [
-      cursor.slice(0, 7) + "-01",
-      year +
-        "-" +
-        String(month).padStart(2, "0") +
-        "-" +
-        String(monthLast(year, month)).padStart(2, "0"),
-    ];
-  }
-  function monthLast(y, m) {
-    return new Date(Date.UTC(y, m, 0)).getUTCDate();
-  }
-  function renderPublic() {
-    $("jumpMonth").value = cursor.slice(0, 7);
-    $("restoreLookup").classList.toggle("hidden", !adminPreview);
-    const [from, to] = periodRange(),
-      events = filtered(),
-      shown = events.filter((e) => e.date >= from && e.date <= to);
-    $("periodLabel").textContent =
-      view === "year"
-        ? cursor.slice(0, 4)
-        : view === "week"
-          ? `${dateGR(from)} – ${dateGR(to)}`
-          : fmt(from, { month: "long", year: "numeric" });
-    $("filters").innerHTML = Object.entries(categories)
-      .map(
-        ([k, v]) =>
-          `<button class="pill ${filter.has(k) ? "active" : ""}" data-filter="${k}">${esc(v)}</button>`,
-      )
-      .join("");
-    $("yearOptions").classList.toggle("hidden", view !== "year");
-    $("count").textContent =
-      `${shown.length} εμφανιζόμενα γεγονότα${search ? " · Αναζήτηση ενεργή" : ""}`;
-    document
-      .querySelectorAll("[data-view]")
-      .forEach((b) => b.classList.toggle("active", b.dataset.view === view));
-    if (view === "agenda" || view === "week") {
-      let prev = "";
-      $("calendarBody").innerHTML = shown.length
-        ? '<div class="agenda">' +
-          shown
-            .map((e) => {
-              let head = "";
-              if (e.date !== prev) {
-                head = `<div class="dayline" data-day="${e.date}">${esc(dateLabel(e.date))}</div>`;
-                prev = e.date;
-              }
-              return `${head}<div class="event ${e.category}${e.pending ? " pending" : ""}" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}" role="button" tabindex="0"><div class="time">${esc(e.time || "—")}</div><div class="stripe"></div><div><div class="title">${esc(e.title)}</div><div class="sub">${esc(detail(e))}</div></div><span class="tag">${esc(categories[e.category])}</span></div>`;
-            })
-            .join("") +
-          "</div>"
-        : '<div class="empty">Δεν υπάρχουν εγγραφές σε αυτή την περίοδο.</div>';
-      return;
-    }
-    if (view === "year") {
-      const y = +cursor.slice(0, 4),
-        fullWeek = $("weekendOnly").checked;
-      const priority = new Set(["special", "external", "other"]);
-      const yearEvents = events.filter((e) => e.date.startsWith(String(y)));
-      const months = Array.from({ length: 12 }, (_, i) => {
-        const m = i + 1,
-          first = y + "-" + String(m).padStart(2, "0") + "-01",
-          last = monthLast(y, m),
-          days = [];
-        for (let day = 1; day <= last; day++) {
-          const d = first.slice(0, 8) + String(day).padStart(2, "0");
-          const dayEvents = yearEvents.filter((e) => e.date === d);
-          if (
-            !fullWeek &&
-            !dayEvents.length &&
-            !(adminPreview && cancelledRegular(d).length)
-          )
-            continue;
-          const w = weekday(d);
-          days.push({
-            week: Math.floor((day - 1 + ((weekday(first) + 6) % 7)) / 7),
-            html: `<div class="weekend-day"><button class="weekend-date date-button" data-day="${d}"><strong>${day}</strong><span>${["Κυρ", "Δευ", "Τρι", "Τετ", "Πεμ", "Παρ", "Σαβ"][w]}</span></button><div class="weekend-events">${dayEvents.length ? dayEvents.map((e) => `<button class="weekend-event ${e.category}${e.pending ? " pending" : ""}" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}" title="${esc(detail(e))}"><strong>${esc(e.title)}</strong><small>${esc(e.time || "")}${detail(e) ? " · " + esc(detail(e)) : ""}</small></button>`).join("") : '<span class="weekend-empty">—</span>'}${adminPreview && cancelledRegular(d).length ? `<button class="btn small" data-day="${d}">↶ Ακυρωμένη ημερίδα</button>` : ""}</div></div>`,
-          });
-        }
-        const monthEvents = yearEvents.filter(
-          (e) => e.date.slice(0, 7) === first.slice(0, 7),
-        );
-        return `<section class="weekend-month"><h3>${esc(fmt(first, { month: "long", year: "numeric" }))} <span class="tiny">${monthEvents.length} γεγονότα</span></h3>${
-          days.length
-            ? `<div class="weekend-days">${[...new Set(days.map((x) => x.week))]
-                .map(
-                  (w) =>
-                    `<div class="year-week-row">${days
-                      .filter((x) => x.week === w)
-                      .map((x) => x.html)
-                      .join("")}</div>`,
-                )
-                .join("")}</div>`
-            : '<p class="tiny">Δεν υπάρχουν σχετικά γεγονότα.</p>'
-        }</section>`;
-      });
-      $("calendarBody").innerHTML =
-        '<div class="year-weekends">' + months.join("") + "</div>";
-      return;
-    }
-    const y = +cursor.slice(0, 4),
-      m = +cursor.slice(5, 7),
-      first = y + "-" + String(m).padStart(2, "0") + "-01",
-      off = (weekday(first) + 6) % 7,
-      n = monthLast(y, m),
-      byDate = {};
-    shown.forEach((e) => (byDate[e.date] ??= []).push(e));
-    let html =
-      '<div class="monthgrid">' +
-      ["Δευ", "Τρι", "Τετ", "Πεμ", "Παρ", "Σαβ", "Κυρ"]
-        .map((x) => `<div class="weekday">${x}</div>`)
-        .join("");
-    for (let i = 0; i < Math.ceil((n + off) / 7) * 7; i++) {
-      const day = i - off + 1,
-        valid = day >= 1 && day <= n,
-        d = valid ? first.slice(0, 8) + String(day).padStart(2, "0") : "";
-      html += `<div class="day ${valid ? "" : "off"} ${d === todayISO() ? "today" : ""}"><button class="daynum date-button" ${valid ? `data-day="${d}"` : "disabled"}>${valid ? day : ""}</button>${valid && adminPreview && cancelledRegular(d).length ? `<button class="btn small" data-day="${d}">↶</button>` : ""}${valid ? (byDate[d] || []).map((e) => `<button class="dotentry ${e.category}${e.pending ? " pending" : ""}" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}" title="${esc(e.title + " " + (e.time || "") + (e.pending ? " · Σε εκκρεμότητα" : ""))}">${esc(e.title)} <span class="tiny">${esc(e.time)}</span></button>`).join("") : ""}</div>`;
-    }
-    $("calendarBody").innerHTML = html + "</div>";
   }
   function render() {
     if (active === "public") renderPublic();
@@ -329,7 +162,7 @@ import {
     return `<label>${label}<input class="field" id="${id}" type="${type === "date" || type === "time" ? "text" : type}" ${type === "date" ? 'data-date-picker readonly inputmode="none"' : type === "time" ? 'data-time24 placeholder="ΩΩ:ΛΛ" maxlength="5" inputmode="text"' : ""} value="${esc(value)}" ${extra}></label>`;
   }
   function defaultRecord(kind) {
-    const date = cursor;
+    const date = calendarCursor();
     return kind === "regular"
       ? {
           kind,
@@ -894,7 +727,7 @@ import {
           );
         if (!items.length) return "";
         return (
-          `<details ${kind === "holiday" ? "" : "open"} style="margin:12px 0"><summary style="cursor:pointer;padding:12px;font-weight:700">${esc(label)} (${items.length})</summary>` +
+          `<details ${kind === "holiday" ? "" : "open"} style="margin:12px 0"><summary style="calendarCursor():pointer;padding:12px;font-weight:700">${esc(label)} (${items.length})</summary>` +
           items
             .map(
               (r) =>
@@ -996,7 +829,7 @@ import {
     delete host.dataset.autoHolidayDate;
     delete host.dataset.autoHolidayTitle;
     host.onclick = null;
-    host.innerHTML = `<h2>Αργίες και κλείσιμο Ομίλου</h2><p class="muted">Οι επιλογές ισχύουν για όλες τις ημέρες από την έναρξη έως τη λήξη (συμπεριλαμβάνονται και οι δύο). Κάθε ημέρα αποθηκεύεται χωριστά. Οι ήδη καταχωρισμένες ημέρες διατηρούνται. Τα μαθήματα αναπληρώνονται. Οι έκτακτες και εξωτερικές διοργανώσεις δεν ακυρώνονται αυτόματα.</p><div class="formgrid">${input("holidayTitle", "Ονομασία", "text", "")}${input("holidayDate", "Από", "date", cursor)}${input("holidayEnd", "Έως", "date", cursor)}</div><label class="check"><input id="blockReg" type="checkbox" checked> Δεν γίνονται τακτικοί αγώνες</label><label class="check"><input id="blockLesson" type="checkbox" checked> Δεν γίνονται μαθήματα</label><button class="btn primary" id="saveHoliday">Αποθήκευση αργιών</button><hr><h3>Αυτόματες αργίες</h3>${input("autoYear", "Έτος", "number", cursor.slice(0, 4))}<div id="autoHolidayList"></div><hr><h3>Καταχωρισμένες αργίες / κλεισίματα</h3>${data
+    host.innerHTML = `<h2>Αργίες και κλείσιμο Ομίλου</h2><p class="muted">Οι επιλογές ισχύουν για όλες τις ημέρες από την έναρξη έως τη λήξη (συμπεριλαμβάνονται και οι δύο). Κάθε ημέρα αποθηκεύεται χωριστά. Οι ήδη καταχωρισμένες ημέρες διατηρούνται. Τα μαθήματα αναπληρώνονται. Οι έκτακτες και εξωτερικές διοργανώσεις δεν ακυρώνονται αυτόματα.</p><div class="formgrid">${input("holidayTitle", "Ονομασία", "text", "")}${input("holidayDate", "Από", "date", calendarCursor())}${input("holidayEnd", "Έως", "date", calendarCursor())}</div><label class="check"><input id="blockReg" type="checkbox" checked> Δεν γίνονται τακτικοί αγώνες</label><label class="check"><input id="blockLesson" type="checkbox" checked> Δεν γίνονται μαθήματα</label><button class="btn primary" id="saveHoliday">Αποθήκευση αργιών</button><hr><h3>Αυτόματες αργίες</h3>${input("autoYear", "Έτος", "number", calendarCursor().slice(0, 4))}<div id="autoHolidayList"></div><hr><h3>Καταχωρισμένες αργίες / κλεισίματα</h3>${data
       .filter((r) => r.kind === "holiday")
       .sort((a, b) => a.start.localeCompare(b.start))
       .map(
@@ -1153,7 +986,7 @@ import {
   function renderClearYear() {
     const host = $("adminContent");
     host.onclick = null;
-    host.innerHTML = `<h2>Εκκαθάριση έτους</h2><p>Αφαιρεί τις καταχωρίσεις που ανήκουν εξ ολοκλήρου στο επιλεγμένο έτος. Οι αυτόματες αργίες παραμένουν. Σειρές και μαθήματα που εκτείνονται σε άλλα έτη διατηρούνται, για να μη χαθεί η συνέχειά τους.</p>${input("clearYearValue", "Έτος προς εκκαθάριση", "number", cursor.slice(0, 4), 'min="2000" max="2099"')}<button class="btn primary" id="clearPreviewBtn">Προεπισκόπηση εκκαθάρισης</button><div id="clearPreview"></div>`;
+    host.innerHTML = `<h2>Εκκαθάριση έτους</h2><p>Αφαιρεί τις καταχωρίσεις που ανήκουν εξ ολοκλήρου στο επιλεγμένο έτος. Οι αυτόματες αργίες παραμένουν. Σειρές και μαθήματα που εκτείνονται σε άλλα έτη διατηρούνται, για να μη χαθεί η συνέχειά τους.</p>${input("clearYearValue", "Έτος προς εκκαθάριση", "number", calendarCursor().slice(0, 4), 'min="2000" max="2099"')}<button class="btn primary" id="clearPreviewBtn">Προεπισκόπηση εκκαθάρισης</button><div id="clearPreview"></div>`;
     $("clearPreviewBtn").onclick = () => {
       const y = Number($("clearYearValue").value);
       if (!Number.isInteger(y) || y < 2000 || y > 2099)
@@ -1172,8 +1005,10 @@ import {
         const ids = new Set(plan.remove.map((r) => r.id));
         data = data.filter((r) => !ids.has(r.id));
         for (const r of data) {
-          if (r.kind === "special" && r.replaces)
-            r.replaces = r.replaces.filter((z) => !ids.has(z.id));
+          if (r.kind !== "special") continue;
+          for (const field of ["replaces", "keepsCancelled"]) {
+            if (r[field]) r[field] = r[field].filter((z) => !ids.has(z.id));
+          }
         }
         persist();
         render();
@@ -1187,7 +1022,7 @@ import {
   function renderRollover() {
     const host = $("adminContent");
     host.onclick = null;
-    host.innerHTML = `<h2>Προετοιμασία επόμενου έτους</h2><p>Οι τακτικές σειρές αντιγράφονται στην ίδια ημέρα εβδομάδας. Τα μαθήματα συνεχίζονται αυτόματα και δεν αντιγράφονται. Οι βασικές αργίες υπολογίζονται αυτόματα. Οι έκτακτες μεταφέρονται στην κοντινότερη αντίστοιχη ημέρα εβδομάδας.</p>${input("sourceYear", "Έτος προέλευσης", "number", cursor.slice(0, 4))}<label class="check"><input type="checkbox" id="copySpecial"> Αντιγραφή έκτακτων και άλλων εκδηλώσεων (ενδεικτικές ημερομηνίες, προς έλεγχο)</label><button class="btn primary" id="roll">Προετοιμασία</button><div id="rollPreview"></div>`;
+    host.innerHTML = `<h2>Προετοιμασία επόμενου έτους</h2><p>Οι τακτικές σειρές αντιγράφονται στην ίδια ημέρα εβδομάδας. Τα μαθήματα συνεχίζονται αυτόματα και δεν αντιγράφονται. Οι βασικές αργίες υπολογίζονται αυτόματα. Οι έκτακτες μεταφέρονται στην κοντινότερη αντίστοιχη ημέρα εβδομάδας.</p>${input("sourceYear", "Έτος προέλευσης", "number", calendarCursor().slice(0, 4))}<label class="check"><input type="checkbox" id="copySpecial"> Αντιγραφή έκτακτων και άλλων εκδηλώσεων (ενδεικτικές ημερομηνίες, προς έλεγχο)</label><button class="btn primary" id="roll">Προετοιμασία</button><div id="rollPreview"></div>`;
     $("roll").onclick = () => {
       const y = +$("sourceYear").value;
       if (!Number.isInteger(y) || y < 2000 || y > 2098)
@@ -1251,6 +1086,7 @@ import {
             );
             n.dates = r.dates.map((d) => addDays(d, offset));
             n.replaces = [];
+            n.keepsCancelled = [];
           } else n.start = nearestWeekday(r.start);
           copies.push(n);
         }
@@ -1409,14 +1245,7 @@ import {
       adminPreview && !r.automatic
         ? `<div class="quick-actions"><button class="btn primary" id="quickEdit">Επεξεργασία καταχώρισης</button><button class="btn" id="quickMove">Μετακίνηση διοργάνωσης</button>${["regular", "special"].includes(r.kind) ? '<button class="btn" id="quickMoveOne">Μετακίνηση ημερίδας</button>' : ""}${r.kind === "regular" || r.kind === "lesson" || r.kind === "special" ? '<button class="btn" id="quickTime">Αλλαγή ώρας γεγονότος</button>' : ""}${r.kind === "regular" || r.kind === "lesson" ? '<button class="btn danger" id="quickCancel">Ακύρωση γεγονότος</button>' : ""}<button class="btn danger" id="quickDelete">Διαγραφή</button></div>`
         : "";
-    const html = `<div class="modalback" id="modalBack"><div class="modal" role="dialog" aria-modal="true" aria-label="Λεπτομέρειες γεγονότος"><div class="spread"><h2>${esc(e.title)}</h2><button class="btn small" id="closeModal" aria-label="Κλείσιμο">✕</button></div><div class="row"><span class="tag">${esc(categories[e.category])}</span><span class="tag">${esc(dateLabel(e.date))}</span></div><p><strong>${esc(e.time || "Χωρίς καθορισμένη ώρα")}</strong></p><p class="muted">${esc(detail(e) || "Δεν υπάρχουν πρόσθετες πληροφορίες.")}</p>${actions}<div class="row"><button class="btn" id="closeDetail">Κλείσιμο</button></div></div></div>`;
-    $("modalHost").innerHTML = html;
-    const close = () => ($("modalHost").innerHTML = "");
-    $("closeModal").onclick = close;
-    $("closeDetail").onclick = close;
-    $("modalBack").onclick = (x) => {
-      if (x.target.id === "modalBack") close();
-    };
+    const close = displayEvent(e, actions);
     if (!adminPreview || r.automatic) return;
     if ($("quickDelete"))
       $("quickDelete").onclick = () => deleteRecord(id, date, e.number);
@@ -1520,11 +1349,7 @@ import {
   }
   function showDay(date) {
     const list = filtered().filter((e) => e.date === date);
-    $("modalHost").innerHTML =
-      `<div class="modalback" id="modalBack"><div class="modal"><div class="spread"><h2>${esc(dateLabel(date))}</h2><button class="btn small" id="closeDay">✕</button></div>${list.length ? list.map((e) => `<button class="day-detail" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}"><strong>${esc(e.title)}</strong><span>${esc(e.time || "Χωρίς ώρα")} · ${esc(detail(e))}</span></button>`).join("") : '<p class="muted">Δεν υπάρχουν γεγονότα.</p>'}${restoreButtons(date)}</div></div>`;
-    $("closeDay").onclick = () => {
-      $("modalHost").innerHTML = "";
-    };
+    displayDay(date, list, restoreButtons(date));
     $("modalHost").onclick = (e) => {
       const restore = e.target.closest("[data-restore]");
       if (restore) {
@@ -1567,157 +1392,6 @@ import {
       else if (e.target.id === "modalBack") $("modalHost").innerHTML = "";
     };
   }
-  function navigate(n) {
-    let y = +cursor.slice(0, 4),
-      m = +cursor.slice(5, 7);
-    if (view === "year") cursor = y + n + "-01-01";
-    else if (view === "week") cursor = addDays(cursor, n * 7);
-    else {
-      m += n;
-      while (m < 1) {
-        m += 12;
-        y--;
-      }
-      while (m > 12) {
-        m -= 12;
-        y++;
-      }
-      cursor = y + "-" + String(m).padStart(2, "0") + "-01";
-    }
-    renderPublic();
-  }
-  const themeKey = "omh-calendar-theme-v3";
-  let darkMode = true;
-  try {
-    darkMode = localStorage.getItem(themeKey) !== "light";
-  } catch {}
-  function applyTheme() {
-    document.body.classList.toggle("dark", darkMode);
-    $("themeToggle").textContent = darkMode ? "☀ Φωτεινό" : "☾ Σκοτεινό";
-    $("themeToggle").setAttribute("aria-pressed", String(darkMode));
-  }
-  applyTheme();
-  $("themeToggle").onclick = () => {
-    darkMode = !darkMode;
-    try {
-      localStorage.setItem(themeKey, darkMode ? "dark" : "light");
-    } catch {}
-    applyTheme();
-  };
-  $("restoreDate").value = todayISO();
-  $("restoreOpen").onclick = () => {
-    if (adminPreview && $("restoreDate").value) showDay($("restoreDate").value);
-  };
-  $("tabPublic").onclick = () => run(loadPublic);
-  $("tabAdmin").onclick = () => {
-    if (revision === null) {
-      $("access").classList.toggle("hidden");
-      $("username").focus();
-      return;
-    }
-    adminPreview = true;
-    showTab("admin");
-  };
-  $("jumpMonth").onchange = (e) => {
-    if (/^\d{4}-\d{2}$/.test(e.target.value)) {
-      cursor = e.target.value + "-01";
-      renderPublic();
-    }
-  };
-  $("prev").onclick = () => navigate(-1);
-  $("next").onclick = () => navigate(1);
-  $("today").onclick = () => {
-    cursor = todayISO();
-    renderPublic();
-  };
-  $("viewBtns").onclick = (e) => {
-    const b = e.target.closest("[data-view]");
-    if (b) {
-      const next = b.dataset.view;
-      if (view !== "year" && next === "year") {
-        savedNonYearFilters = new Set(filter);
-        filter.delete("reg");
-        filter.delete("lesson");
-        $("weekendOnly").checked = false;
-      } else if (view === "year" && next !== "year" && savedNonYearFilters) {
-        filter = new Set(savedNonYearFilters);
-        savedNonYearFilters = null;
-      }
-      view = next;
-      renderPublic();
-    }
-  };
-  $("filters").onclick = (e) => {
-    const b = e.target.closest("[data-filter]");
-    if (!b) return;
-    filter.has(b.dataset.filter)
-      ? filter.delete(b.dataset.filter)
-      : filter.add(b.dataset.filter);
-    renderPublic();
-  };
-  $("search").oninput = (e) => {
-    search = e.target.value;
-    renderPublic();
-  };
-  $("calendarBody").onclick = (e) => {
-    const b = e.target.closest("[data-show]");
-    if (b) {
-      showEvent(b.dataset.show, b.dataset.date, b.dataset.number);
-      return;
-    }
-    const day = e.target.closest("[data-day]");
-    if (day) showDay(day.dataset.day);
-  };
-  $("weekendOnly").onchange = renderPublic;
-  $("adminMenu").onclick = (e) => {
-    const b = e.target.closest("[data-section]");
-    if (b) {
-      section = b.dataset.section;
-      editing = null;
-      renderAdmin();
-    }
-  };
-  $("export").onclick = () => {
-    const blob = new Blob(
-        [
-          JSON.stringify(
-            { format: "omh-calendar-demo", version: 1, records: data },
-            null,
-            2,
-          ),
-        ],
-        { type: "application/json" },
-      ),
-      url = URL.createObjectURL(blob),
-      a = document.createElement("a");
-    a.href = url;
-    a.download = "OMH_calendar_backup.json";
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    toast("Δημιουργήθηκε αντίγραφο JSON.");
-  };
-  $("importBtn").onclick = () => $("importFile").click();
-  $("importFile").onchange = async (e) => {
-    const file = e.target.files[0];
-    e.target.value = "";
-    if (!file) return;
-    await run(async () => {
-      if (file.size > 2_000_000) throw Error("Το αντίγραφο είναι πολύ μεγάλο.");
-      const backup = JSON.parse(await file.text());
-      await api("validate", backup);
-      if (
-        !confirm(
-          "Η εισαγωγή θα αντικαταστήσει τις καταχωρίσεις του πρόχειρου. Συνέχεια;",
-        )
-      )
-        return;
-      data = backup.records;
-      persist();
-      editing = null;
-      section = "manage";
-      render();
-    });
-  };
   function formatDateInputs() {
     for (const el of document.querySelectorAll("input[data-date-picker]")) {
       if (el.dataset.formatted) continue;
@@ -1821,236 +1495,347 @@ import {
       openDatePicker(e.target);
     }
   });
-  render();
   formatDateInputs();
-  document.addEventListener("keydown", (e) => {
-    if (
-      (e.key === "Enter" || e.key === " ") &&
-      e.target.matches(".event[data-show]")
-    ) {
-      e.preventDefault();
-      e.target.click();
-    }
-  });
-  async function api(path, body) {
-    const response = await fetch(
-      "api/" + path,
-      body === undefined
-        ? {}
-        : {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          },
-    );
-    const result = await response.json();
-    if (!response.ok) throw Error(result.error);
-    return result;
-  }
-  async function run(action) {
-    if (busy) return;
-    busy = true;
-    $("public").inert = true;
-    $("admin").inert = true;
-    $("modalHost").inert = true;
-    $("cutoff").disabled = true;
-    $("retroactive").disabled = true;
-    document
-      .querySelectorAll("#tools button,#access button,.tabs button")
-      .forEach((button) => {
-        button.dataset.wasDisabled = String(button.disabled);
-        button.disabled = true;
-      });
-    try {
-      await action();
-    } catch (error) {
-      toast(error.message || "Η σύνδεση απέτυχε.");
-    } finally {
-      busy = false;
-      $("public").inert = false;
-      $("admin").inert = false;
-      $("modalHost").inert = false;
-      $("cutoff").disabled = false;
-      $("retroactive").disabled = false;
-      document
-        .querySelectorAll("#tools button,#access button,.tabs button")
-        .forEach((button) => {
-          button.disabled = button.dataset.wasDisabled === "true";
-        });
-      $("publish").disabled = !previewToken;
+  const storageStatus = () => $("storageStatus");
+  let state,
+    db,
+    preservedRevision = 0,
+    writeQueue = Promise.resolve(),
+    unsaved = false;
+  let writeNumber = 0,
+    previewDraft,
+    checking = false,
+    lastChecked = false;
+  const root =
+    location.protocol === "file:"
+      ? PAGES_ROOT
+      : new URL("./", location.href).href;
+
+  function invalidatePreview() {
+    previewDraft = undefined;
+    $("publish").disabled = true;
+    if (active === "public" && !adminPreview) {
+      publicEvents = [];
+      showTab("admin");
     }
   }
-  async function loadPublic() {
-    publicEvents = (await api("public")).events;
-    adminPreview = false;
-    $("access").classList.add("hidden");
-    $("modalHost").innerHTML = "";
-    showTab("public");
+  function persist() {
+    invalidatePreview();
+    state.records = data;
+    persistState();
   }
-  async function loadDraft() {
-    const draft = await api("draft");
-    data = draft.records;
-    revision = draft.revision;
-    $("cutoff").value = draft.cutoff;
-    dirty = false;
-    adminPreview = true;
-    $("access").classList.add("hidden");
-    $("tools").classList.remove("hidden");
-    $("password").value = "";
-    $("tabAdmin").textContent = "⚙ Διαχείριση";
-    showTab("admin");
-  }
-  const payload = () => ({
-    records: data,
-    revision,
-    cutoff: $("cutoff").value,
-    retroactive: $("retroactive").checked,
-  });
-  $("loginForm").onsubmit = (e) => {
-    e.preventDefault();
-    run(async () => {
+  function persistState() {
+    const value = structuredClone(state);
+    const write = ++writeNumber;
+    unsaved = true;
+    storageStatus().textContent = "Το πρόχειρο αποθηκεύεται στη συσκευή…";
+    writeQueue = writeQueue.then(async () => {
       try {
-        await api("login", {
-          username: $("username").value,
-          password: $("password").value,
-        });
-      } finally {
-        $("password").value = "";
+        if (!db)
+          throw Error(
+            "Η τοπική αποθήκευση δεν είναι διαθέσιμη σε αυτόν τον browser.",
+          );
+        preservedRevision = await storeState(db, value, preservedRevision);
+        if (write === writeNumber) {
+          unsaved = false;
+          storageStatus().textContent = "Το πρόχειρο αποθηκεύτηκε στη συσκευή.";
+        }
+        return true;
+      } catch (error) {
+        if (write === writeNumber)
+          storageStatus().textContent =
+            (error?.message || "Αποτυχία τοπικής αποθήκευσης.") +
+            " Εξαγάγετε ιδιωτικό αντίγραφο.";
+        return false;
       }
-      await loadDraft();
     });
-  };
-  $("cutoff").onchange = persist;
-  $("retroactive").onchange = invalidatePreview;
-  $("draftView").onclick = () => {
-    adminPreview = true;
-    showTab("public");
-    $("productionStatus").textContent = "Προβολή ιδιωτικού πρόχειρου.";
-  };
-  $("saveDraft").onclick = () =>
-    run(async () => {
-      revision = (await api("draft", payload())).revision;
-      dirty = false;
-      invalidatePreview();
-      $("productionStatus").textContent = "Το πρόχειρο αποθηκεύτηκε.";
-    });
-  $("preview").onclick = () =>
-    run(async () => {
-      const result = await api("preview", payload());
-      previewToken = result.token;
-      publicEvents = result.events;
-      adminPreview = false;
-      $("modalHost").innerHTML = "";
-      showTab("public");
-      $("productionStatus").textContent =
-        "Προεπισκόπηση δημοσίευσης έως " +
-        $("cutoff").value +
-        (result.pastChanges
-          ? "\nΑναδρομικές διαφορές: " +
-            result.pastChanges +
-            " ημερίδες. " +
-            ($("retroactive").checked
-              ? "Οι διαφορές εμφανίζονται στην προεπισκόπηση."
-              : "Διατηρείται το δημοσιευμένο ιστορικό.")
-          : "");
-    });
-  $("publish").onclick = () =>
-    run(async () => {
+    return writeQueue;
+  }
+  function privateImport(file) {
+    return file.text().then((source) => {
+      if (file.size > MAX_PRIVATE_BYTES)
+        throw Error("Το ιδιωτικό αντίγραφο υπερβαίνει τα 30 MB.");
+      const backup = readBackup(JSON.parse(source));
       if (
-        !confirm(
-          "Να δημοσιευτεί το πρόγραμμα της προεπισκόπησης; Τρίτοι ενδέχεται να κρατήσουν αντίγραφά του.",
+        !confirm("Η εισαγωγή θα αντικαταστήσει το τοπικό πρόχειρο. Συνέχεια;")
+      )
+        return;
+      // An older backup can replace a draft, while the current public version is still the baseline.
+      const confirmed = lastChecked ? state.confirmed : backup.confirmed;
+      const versions = [...backup.versions];
+      if (lastChecked) {
+        for (const entry of state.versions) {
+          if (
+            !versions.some(
+              (version) =>
+                version.document.publicationId === entry.document.publicationId,
+            )
+          )
+            versions.push(entry);
+        }
+      }
+      state = { ...backup, confirmed, versions };
+      data = state.records;
+      $("cutoff").value = state.cutoff;
+      editing = null;
+      section = "manage";
+      persist();
+      showTab("admin");
+      renderConfirmed();
+    });
+  }
+  function download(documentValue, name) {
+    const blob = new Blob([JSON.stringify(documentValue, null, 2) + "\n"], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = name;
+    anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  function renderConfirmed() {
+    let message = publicationLabel(state.confirmed);
+    if (!lastChecked) message += " · Χωρίς νέο έλεγχο GitHub Pages.";
+    try {
+      confirmedVersion(state);
+    } catch {
+      message +=
+        " Η ιδιωτική βάση αυτής της έκδοσης λείπει από τη συσκευή. Εισαγάγετε το αντίστοιχο ιδιωτικό αντίγραφο πριν εξαγάγετε νέο πρόγραμμα.";
+    }
+    $("publicationStatus").textContent = message;
+  }
+  async function refreshAdmin({ manual = false } = {}) {
+    if (checking) return;
+    checking = true;
+    try {
+      const confirmed = await loadPublished(root);
+      const changed = !sameSnapshot(state.confirmed, confirmed);
+      lastChecked = true;
+      if (
+        state.confirmed.publishedAt &&
+        (!confirmed.publishedAt ||
+          confirmed.publishedAt < state.confirmed.publishedAt)
+      ) {
+        throw Error("Το Pages επέστρεψε παλαιότερο στιγμιότυπο.");
+      }
+      if (changed || state.confirmed.publishedAt !== confirmed.publishedAt) {
+        state.confirmed = confirmed;
+        if (changed) {
+          invalidatePreview();
+          if (
+            state.versions.some((entry) =>
+              sameSnapshot(entry.document, confirmed),
+            )
+          )
+            $("productionStatus").textContent =
+              "Η έκδοση εμφανίζεται στο GitHub Pages.";
+          else
+            $("productionStatus").textContent =
+              "Το GitHub Pages εμφανίζει διαφορετική έκδοση.";
+        }
+        await persistState();
+      }
+      renderConfirmed();
+      if (manual)
+        toast(
+          changed
+            ? "Το GitHub Pages επιβεβαίωσε διαφορετική δημόσια έκδοση."
+            : "Ο έλεγχος GitHub Pages ολοκληρώθηκε.",
+        );
+    } catch {
+      lastChecked = false;
+      renderConfirmed();
+      if (manual)
+        toast(
+          "Ο έλεγχος GitHub Pages απέτυχε. Ελέγξτε τη σύνδεση ή δοκιμάστε αργότερα.",
+        );
+    } finally {
+      checking = false;
+    }
+  }
+  function displayPreview(entry, pastChanges = 0) {
+    previewDraft = entry;
+    publicEvents = entry.document.events;
+    adminPreview = false;
+    $("modalHost").replaceChildren();
+    $("publish").disabled = false;
+    $("productionStatus").textContent =
+      "Προεπισκόπηση έως " +
+      entry.document.cutoff +
+      " · " +
+      publicEvents.length +
+      " ημερίδες. " +
+      (pastChanges
+        ? "Αναδρομικές διαφορές σε " +
+          pastChanges +
+          " ημερίδες. " +
+          ($("retroactive").checked
+            ? "Η προεπισκόπηση περιλαμβάνει τις διορθώσεις."
+            : "Διατηρείται το δημοσιευμένο ιστορικό.")
+        : "");
+    showTab("public");
+  }
+  function preview() {
+    try {
+      validateDraft({ records: data, cutoff: state.cutoff });
+      const result = publication(
+        {
+          records: data,
+          cutoff: state.cutoff,
+          retroactive: $("retroactive").checked,
+        },
+        confirmedVersion(state),
+      );
+      const { rows, seriesIds } = projectPublic(result.events);
+      const document = newSnapshot({
+        basePublicationId: state.confirmed.publicationId,
+        cutoff: state.cutoff,
+        events: rows,
+      });
+      displayPreview(
+        { document, records: structuredClone(result.records), seriesIds },
+        result.pastChanges,
+      );
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+  async function restoreFile(file) {
+    if (!file) return;
+    try {
+      const archive = parsePublic(await file.text());
+      if (!archive.publicationId)
+        throw Error("Επιλέξτε προηγούμενη δημοσιευμένη έκδοση.");
+      const previous = state.versions.find((entry) =>
+        sameSnapshot(entry.document, archive),
+      );
+
+      const document = newSnapshot({
+        basePublicationId: state.confirmed.publicationId,
+        cutoff: archive.cutoff,
+        events: archive.events,
+        restoredFrom: archive.publicationId,
+      });
+      displayPreview({ records: null, seriesIds: null, ...previous, document });
+      $("productionStatus").textContent =
+        "Προεπισκόπηση επαναφοράς · " +
+        archive.events.length +
+        " ημερίδες. Το ιδιωτικό πρόχειρο διατηρείται.";
+    } catch (error) {
+      toast(error.message);
+    }
+  }
+  function wireAdmin() {
+    $("admin").inert = false;
+    $("tools").inert = false;
+    $("tabAdmin").onclick = () => {
+      adminPreview = true;
+      showTab("admin");
+    };
+    $("draftView").onclick = () => {
+      adminPreview = true;
+      showTab("public");
+    };
+    $("restoreDate").value = todayISO();
+    $("restoreOpen").onclick = () => {
+      if (adminPreview && $("restoreDate").value)
+        showDay($("restoreDate").value);
+    };
+    $("adminMenu").onclick = (e) => {
+      const button = e.target.closest("[data-section]");
+      if (button) {
+        section = button.dataset.section;
+        editing = null;
+        renderAdmin();
+      }
+    };
+    $("cutoff").value = state.cutoff;
+    $("cutoff").onchange = (e) => {
+      state.cutoff = e.target.value;
+      persist();
+    };
+    $("retroactive").onchange = invalidatePreview;
+    $("export").onclick = () =>
+      download(state, "OMH_PRIVATE_BACKUP_" + todayISO() + ".json");
+    $("importBtn").onclick = () => $("importFile").click();
+    $("importFile").onchange = async (e) => {
+      const file = e.target.files[0];
+      e.target.value = "";
+      if (file)
+        try {
+          await privateImport(file);
+        } catch (error) {
+          toast(error.message);
+        }
+    };
+    $("preview").onclick = preview;
+    $("publish").onclick = async () => {
+      const entry = previewDraft;
+      if (!entry) return;
+      $("publish").disabled = true;
+      if (
+        !state.versions.some(
+          (version) =>
+            version.document.publicationId === entry.document.publicationId,
         )
       )
-        return;
-      const result = await api("publish", {
-        ...payload(),
-        token: previewToken,
-      });
-      revision = result.revision;
-      dirty = false;
-      invalidatePreview();
-      await loadPublic();
-      $("productionStatus").textContent = "Το πρόγραμμα δημοσιεύτηκε.";
+        state.versions.push(entry);
+      await persistState();
+      download(entry.document, "calendar.json");
+      $("productionStatus").textContent =
+        "Το αρχείο ετοιμάστηκε. Εξαγάγετε ιδιωτικό αντίγραφο, ανεβάστε το calendar.json στο GitHub και πατήστε «Έλεγχος GitHub Pages».";
+      $("publish").disabled = previewDraft !== entry;
+    };
+    $("checkPublication").onclick = () => refreshAdmin({ manual: true });
+    $("restoreArchive").onclick = () => $("restoreFile").click();
+    $("restoreFile").onchange = (e) => {
+      const file = e.target.files[0];
+      e.target.value = "";
+      void restoreFile(file);
+    };
+    window.addEventListener("beforeunload", (e) => {
+      if (unsaved) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
     });
-  $("history").onclick = () =>
-    run(async () => {
-      const list = $("historyList");
-      if (list.childElementCount) {
-        list.replaceChildren();
-        return;
-      }
-      const { versions } = await api("history");
-      if (!versions.length) {
-        list.textContent = "Δεν υπάρχουν δημοσιεύσεις.";
-        return;
-      }
-      for (const version of versions) {
-        const row = document.createElement("div");
-        row.className = "row";
-        const label = document.createElement("span");
-        label.textContent =
-          "Έκδοση " +
-          version.id +
-          " · " +
-          new Date(version.created).toLocaleString("el-GR", {
-            timeZone: "Europe/Athens",
-          }) +
-          " · έως " +
-          version.cutoff;
-        const restore = document.createElement("button");
-        restore.className = "btn small";
-        restore.textContent = "Επαναφορά δημοσίευσης";
-        restore.onclick = () =>
-          run(async () => {
-            if (
-              !confirm(
-                "Να επανέλθει δημόσια αυτή η έκδοση; Το πρόχειρο διατηρείται.",
-              )
-            )
-              return;
-            const result = await api("restore", { id: version.id, revision });
-            revision = result.revision;
-            invalidatePreview();
-            list.replaceChildren();
-            await loadPublic();
-            $("productionStatus").textContent = "Η δημοσίευση επανήλθε.";
+  }
+  async function initAdmin() {
+    state = blankState();
+    try {
+      db = await openStorage(indexedDB);
+      const stored = await storedState(db);
+      if (stored) {
+        state = readBackup(stored.value, { legacy: false });
+        preservedRevision = stored.revision;
+      } else {
+        const legacy = localStorage.getItem("omh-calendar-source-v10-7");
+        if (legacy) {
+          state = readBackup({
+            format: "omh-calendar-demo",
+            version: 1,
+            records: JSON.parse(legacy),
           });
-        row.append(label, restore);
-        list.append(row);
+          await persistState();
+        }
       }
-    });
-  $("logout").onclick = () =>
-    run(async () => {
-      if (
-        dirty &&
-        !confirm("Να γίνει αποσύνδεση χωρίς αποθήκευση των αλλαγών;")
-      )
-        return;
-      await api("logout", {});
-      data = [];
-      revision = null;
-      dirty = false;
-      editing = null;
-      sessionDates = [];
-      sessionTimes = [];
-      adminPreview = false;
-      publicEvents = [];
-      invalidatePreview();
-      $("adminContent").replaceChildren();
-      $("historyList").replaceChildren();
-      $("tools").classList.add("hidden");
-      $("modalHost").replaceChildren();
-      showTab("public");
-      await loadPublic();
-    });
-  window.addEventListener("beforeunload", (e) => {
-    if (dirty) {
-      e.preventDefault();
-      e.returnValue = "";
+      if (!unsaved)
+        storageStatus().textContent =
+          "Οι αλλαγές αποθηκεύονται αυτόματα στη συσκευή.";
+    } catch {
+      db?.close();
+      db = undefined;
+      storageStatus().textContent =
+        "Η τοπική αποθήκευση δεν άνοιξε. Εισαγάγετε ή εξαγάγετε ιδιωτικό αντίγραφο πριν κλείσετε τη σελίδα.";
     }
-  });
-  run(async () => {
-    await loadPublic();
-    if ((await api("session")).authenticated) await loadDraft();
-  });
+    data = state.records;
+    adminPreview = true;
+    wireAdmin();
+    renderConfirmed();
+    showTab("admin");
+    void refreshAdmin();
+  }
+  void initAdmin();
 })();

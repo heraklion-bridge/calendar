@@ -1312,3 +1312,15 @@ input[data-time24] {
   outline: 2px dashed currentColor;
   outline-offset: -2px;
 }
+
+.toolbar-notice {
+  margin-block: 0.65rem;
+}
+.status-row {
+  align-items: center;
+  justify-content: space-between;
+}
+.tabs a,
+.row a.btn {
+  text-decoration: none;
+}

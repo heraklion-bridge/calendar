@@ -3,3 +3,7 @@ node_modules/
 private/
 *.sqlite*
 *.zip
+site/
+OMH_PRIVATE_BACKUP_*.json
+OMH_calendar_backup.json
+OMH_calendar_demo_backup.json

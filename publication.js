@@ -1,4 +1,3 @@
-import { createHash } from "node:crypto";
 import {
   automaticHolidays,
   sessions,
@@ -27,7 +26,7 @@ const list = (value, test, limit = 2000) =>
 const optional = (value, test) => value === undefined || test(value);
 const month = (value) =>
   typeof value === "string" && /^20\d{2}-(0[1-9]|1[0-2])$/.test(value);
-const date = (value) => {
+const validDate = (value) => {
   if (typeof value !== "string" || !/^20\d{2}-\d{2}-\d{2}$/.test(value))
     return false;
   const d = new Date(value);
@@ -35,19 +34,19 @@ const date = (value) => {
 };
 const boolean = (value) => typeof value === "boolean";
 const time = (value) => typeof value === "string" && validTime(value);
-const range = (r) => date(r.start) && date(r.end) && r.start <= r.end;
+const range = (r) => validDate(r.start) && validDate(r.end) && r.start <= r.end;
 const overrides = (value) =>
   object(value) &&
   Object.entries(value).every(
     ([day, entry]) =>
-      date(day) &&
+      validDate(day) &&
       object(entry) &&
-      optional(entry.date, date) &&
+      optional(entry.date, validDate) &&
       optional(entry.time, time) &&
       optional(entry.simultaneous, boolean),
   );
 const validLinks = (value) =>
-  list(value, (z) => object(z) && id(z.id) && date(z.date));
+  list(value, (z) => object(z) && id(z.id) && validDate(z.date));
 const validRecord = (r) => {
   if (
     !object(r) ||
@@ -57,7 +56,9 @@ const validRecord = (r) => {
     !r.title.trim() ||
     !optional(r.notes, (value) => text(value, 20_000)) ||
     !optional(r.pending, boolean) ||
-    !optional(r.excluded, (value) => list(value, date)) ||
+    !optional(r.copiedFrom, id) ||
+    !optional(r.copyYear, (n) => integer(n, 2000, 2099)) ||
+    !optional(r.excluded, (value) => list(value, validDate)) ||
     !optional(r.overrides, overrides)
   )
     return false;
@@ -67,11 +68,11 @@ const validRecord = (r) => {
         range(r) &&
         time(r.time) &&
         optional(r.simultaneous, boolean) &&
-        optional(r.independent, (value) => list(value, date))
+        optional(r.independent, (value) => list(value, validDate))
       );
     case "special":
       return (
-        list(r.dates, date, 150) &&
+        list(r.dates, validDate, 150) &&
         r.dates.length > 0 &&
         list(r.times, time, 150) &&
         r.times.length === r.dates.length &&
@@ -84,7 +85,7 @@ const validRecord = (r) => {
       );
     case "lesson":
       return (
-        date(r.start) &&
+        validDate(r.start) &&
         time(r.time) &&
         integer(r.count, 1, 150) &&
         optional(r.startingNumber, (n) => integer(n, 1, 10_000)) &&
@@ -97,15 +98,15 @@ const validRecord = (r) => {
       );
     case "external":
       return (
-        date(r.start) &&
+        validDate(r.start) &&
         (r.end === undefined || range(r)) &&
         optional(r.time, (v) => v === "" || time(v))
       );
     case "other":
-      return date(r.start) && time(r.time);
+      return validDate(r.start) && time(r.time);
     case "holiday":
       return (
-        date(r.start) &&
+        validDate(r.start) &&
         optional(r.time, (v) => v === "" || time(v)) &&
         optional(r.blocks, (v) =>
           list(v, (k) => ["regular", "lesson"].includes(k), 2),
@@ -113,15 +114,101 @@ const validRecord = (r) => {
       );
   }
 };
-export function validateRecords(records) {
+const commonFields = [
+  "id",
+  "kind",
+  "title",
+  "notes",
+  "pending",
+  "copiedFrom",
+  "copyYear",
+];
+const kindFields = {
+  regular: [
+    "start",
+    "end",
+    "time",
+    "simultaneous",
+    "independent",
+    "excluded",
+    "overrides",
+  ],
+  special: [
+    "dates",
+    "times",
+    "grade",
+    "template",
+    "replaces",
+    "keepsCancelled",
+  ],
+  lesson: [
+    "start",
+    "time",
+    "count",
+    "startingNumber",
+    "cycles",
+    "perCycle",
+    "cycleSizes",
+    "excluded",
+    "overrides",
+    "independent",
+  ],
+  external: ["start", "end", "time", "excluded"],
+  other: ["start", "time"],
+  holiday: ["start", "time", "blocks"],
+};
+const allowed = (object, fields) =>
+  Object.keys(object).every((key) => fields.includes(key));
+function strictRecord(record) {
+  return (
+    allowed(record, [...commonFields, ...kindFields[record.kind]]) &&
+    (!record.overrides ||
+      Object.values(record.overrides).every((entry) =>
+        allowed(entry, ["date", "time", "simultaneous"]),
+      )) &&
+    [...(record.replaces || []), ...(record.keepsCancelled || [])].every(
+      (link) => allowed(link, ["id", "date"]),
+    ) &&
+    optional(record.independent, (value) => list(value, validDate))
+  );
+}
+export function migrateRecords(records) {
+  validateRecords(records);
+  return records.map((record) => {
+    const migrated = Object.fromEntries(
+      Object.entries(record).filter(([key]) =>
+        [...commonFields, ...kindFields[record.kind]].includes(key),
+      ),
+    );
+    if (migrated.overrides)
+      migrated.overrides = Object.fromEntries(
+        Object.entries(migrated.overrides).map(([key, entry]) => [
+          key,
+          Object.fromEntries(
+            Object.entries(entry).filter(([field]) =>
+              ["date", "time", "simultaneous"].includes(field),
+            ),
+          ),
+        ]),
+      );
+    for (const key of ["replaces", "keepsCancelled"])
+      if (migrated[key])
+        migrated[key] = migrated[key].map(({ id, date }) => ({ id, date }));
+    return migrated;
+  });
+}
+export function validateRecords(records, strict = false) {
   if (
-    !list(records, validRecord) ||
+    !list(
+      records,
+      (record) => validRecord(record) && (!strict || strictRecord(record)),
+    ) ||
     new Set(records.map((r) => r.id)).size !== records.length
   )
     throw new InputError("Μη έγκυρες καταχωρίσεις ή διπλά αναγνωριστικά.");
 }
 export function validateDraft(draft) {
-  validateRecords(draft.records);
+  validateRecords(draft.records, true);
   if (draft.cutoff !== "" && !month(draft.cutoff))
     throw new InputError("Μη έγκυρος μήνας δημόσιας προβολής.");
 }
@@ -191,8 +278,6 @@ function approvedRecords(draft, previous, publishedEvents) {
     };
   });
 }
-const digest = (value) =>
-  createHash("sha256").update(JSON.stringify(value)).digest("hex");
 const compare = (a, b) =>
   a.date.localeCompare(b.date) ||
   (a.time || "99").localeCompare(b.time || "99") ||
@@ -228,7 +313,8 @@ export function publication(draft, previous, today = todayISO()) {
   for (const record of [...records, ...holidays]) {
     if (pending.has(record.id)) continue;
     for (const event of sessions(record, records)) {
-      if (event.date.slice(0, 7) > draft.cutoff) continue;
+      if (!validDate(event.date) || event.date.slice(0, 7) > draft.cutoff)
+        continue;
       const {
         date,
         time,
@@ -244,7 +330,6 @@ export function publication(draft, previous, today = todayISO()) {
         grade,
         cycle,
         cycleNumber,
-        note,
       } = event;
       events.push({
         date,
@@ -261,7 +346,6 @@ export function publication(draft, previous, today = todayISO()) {
         grade,
         cycle,
         cycleNumber,
-        note,
       });
     }
   }
@@ -272,8 +356,23 @@ export function publication(draft, previous, today = todayISO()) {
   );
   const key = (e) =>
     JSON.stringify([e.id, e.date, e.category === "special" ? e.number : null]);
-  const nextByKey = new Map(past.map((e) => [key(e), digest(e)]));
-  const oldByKey = new Map(oldPast.map((e) => [key(e), digest(e)]));
+  const detail = (e) =>
+    JSON.stringify([
+      e.category,
+      e.title,
+      e.time || "",
+      e.number ?? null,
+      e.group ?? null,
+      e.groupTotal ?? null,
+      e.independent ?? false,
+      e.simultaneous ?? false,
+      e.total ?? null,
+      e.grade || "",
+      e.cycle ?? null,
+      e.cycleNumber ?? null,
+    ]);
+  const nextByKey = new Map(past.map((e) => [key(e), detail(e)]));
+  const oldByKey = new Map(oldPast.map((e) => [key(e), detail(e)]));
   const pastChanges = previous
     ? [...new Set([...nextByKey.keys(), ...oldByKey.keys()])].filter(
         (k) => nextByKey.get(k) !== oldByKey.get(k),
@@ -290,12 +389,5 @@ export function publication(draft, previous, today = todayISO()) {
           ),
         ].sort(compare)
       : events;
-  const token = digest({
-    records,
-    visible,
-    cutoff: draft.cutoff,
-    retroactive: draft.retroactive === true,
-    revision: draft.revision,
-  });
-  return { records, events: visible, token, pastChanges, cutoff: draft.cutoff };
+  return { records, events: visible, pastChanges, cutoff: draft.cutoff };
 }

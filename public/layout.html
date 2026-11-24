@@ -30,50 +30,6 @@
       </div>
     </header>
     <main class="shell page">
-      <section id="access" class="panel hidden">
-        <form id="loginForm" class="row">
-          <label
-            >Χρήστης
-            <input class="field" id="username" autocomplete="username" required
-          /></label>
-          <label
-            >Κωδικός
-            <input
-              class="field"
-              id="password"
-              type="password"
-              autocomplete="current-password"
-              required
-          /></label>
-          <button class="btn primary">Σύνδεση</button>
-        </form>
-      </section>
-      <div id="tools" class="panel hidden production-toolbar">
-        <div class="row">
-          <button class="btn" id="draftView">Προβολή πρόχειρου</button>
-          <label
-            >Δημόσια προβολή έως και
-            <input class="field" type="month" id="cutoff"
-          /></label>
-          <button class="btn" id="saveDraft">Αποθήκευση πρόχειρου</button>
-          <button class="btn" id="preview">Προεπισκόπηση δημοσίευσης</button>
-          <button class="btn primary" id="publish" disabled>
-            Αποθήκευση &amp; δημοσίευση αλλαγών
-          </button>
-          <button class="btn" id="history">Ιστορικό δημοσιεύσεων</button>
-          <button class="btn" id="logout">Αποσύνδεση</button>
-        </div>
-        <label class="check"
-          ><input type="checkbox" id="retroactive" /> Να εφαρμοστούν αναδρομικές
-          διορθώσεις</label
-        >
-        <div
-          id="productionStatus"
-          class="production-status"
-          role="status"
-        ></div>
-        <div id="historyList"></div>
-      </div>
       <section id="public">
         <div class="panel">
           <div class="spread">
@@ -127,18 +83,6 @@
         </div>
       </section>
       <section id="admin" class="hidden">
-        <div class="hero">
-          <div class="row">
-            <button class="btn" id="export">↓ Εξαγωγή JSON</button
-            ><button class="btn" id="importBtn">↑ Εισαγωγή JSON</button
-            ><input
-              type="file"
-              id="importFile"
-              accept=".json,application/json"
-              hidden
-            />
-          </div>
-        </div>
         <div class="adminlayout">
           <aside class="panel side" id="adminMenu">
             <button class="sidebtn active" data-section="new">
