@@ -1305,3 +1305,10 @@ input[data-time24] {
 .production-status {
   white-space: pre-wrap;
 }
+
+.event.pending,
+.weekend-event.pending,
+.dotentry.pending {
+  outline: 2px dashed currentColor;
+  outline-offset: -2px;
+}

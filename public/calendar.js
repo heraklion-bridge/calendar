@@ -4,6 +4,8 @@ import {
   fmt,
   dateGR,
   dateLabel,
+  greekHolidays,
+  countSpecial,
   validTime,
   todayISO,
   automaticHolidays as holidays,
@@ -224,7 +226,7 @@ import {
                 head = `<div class="dayline" data-day="${e.date}">${esc(dateLabel(e.date))}</div>`;
                 prev = e.date;
               }
-              return `${head}<div class="event ${e.category}" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}" role="button" tabindex="0"><div class="time">${esc(e.time || "—")}</div><div class="stripe"></div><div><div class="title">${esc(e.title)}</div><div class="sub">${esc(detail(e))}</div></div><span class="tag">${esc(categories[e.category])}</span></div>`;
+              return `${head}<div class="event ${e.category}${e.pending ? " pending" : ""}" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}" role="button" tabindex="0"><div class="time">${esc(e.time || "—")}</div><div class="stripe"></div><div><div class="title">${esc(e.title)}</div><div class="sub">${esc(detail(e))}</div></div><span class="tag">${esc(categories[e.category])}</span></div>`;
             })
             .join("") +
           "</div>"
@@ -253,7 +255,7 @@ import {
           const w = weekday(d);
           days.push({
             week: Math.floor((day - 1 + ((weekday(first) + 6) % 7)) / 7),
-            html: `<div class="weekend-day"><button class="weekend-date date-button" data-day="${d}"><strong>${day}</strong><span>${["Κυρ", "Δευ", "Τρι", "Τετ", "Πεμ", "Παρ", "Σαβ"][w]}</span></button><div class="weekend-events">${dayEvents.length ? dayEvents.map((e) => `<button class="weekend-event ${e.category}" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}" title="${esc(detail(e))}"><strong>${esc(e.title)}</strong><small>${esc(e.time || "")}${detail(e) ? " · " + esc(detail(e)) : ""}</small></button>`).join("") : '<span class="weekend-empty">—</span>'}${adminPreview && cancelledRegular(d).length ? `<button class="btn small" data-day="${d}">↶ Ακυρωμένη ημερίδα</button>` : ""}</div></div>`,
+            html: `<div class="weekend-day"><button class="weekend-date date-button" data-day="${d}"><strong>${day}</strong><span>${["Κυρ", "Δευ", "Τρι", "Τετ", "Πεμ", "Παρ", "Σαβ"][w]}</span></button><div class="weekend-events">${dayEvents.length ? dayEvents.map((e) => `<button class="weekend-event ${e.category}${e.pending ? " pending" : ""}" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}" title="${esc(detail(e))}"><strong>${esc(e.title)}</strong><small>${esc(e.time || "")}${detail(e) ? " · " + esc(detail(e)) : ""}</small></button>`).join("") : '<span class="weekend-empty">—</span>'}${adminPreview && cancelledRegular(d).length ? `<button class="btn small" data-day="${d}">↶ Ακυρωμένη ημερίδα</button>` : ""}</div></div>`,
           });
         }
         const monthEvents = yearEvents.filter(
@@ -293,7 +295,7 @@ import {
       const day = i - off + 1,
         valid = day >= 1 && day <= n,
         d = valid ? first.slice(0, 8) + String(day).padStart(2, "0") : "";
-      html += `<div class="day ${valid ? "" : "off"} ${d === todayISO() ? "today" : ""}"><button class="daynum date-button" ${valid ? `data-day="${d}"` : "disabled"}>${valid ? day : ""}</button>${valid && adminPreview && cancelledRegular(d).length ? `<button class="btn small" data-day="${d}">↶</button>` : ""}${valid ? (byDate[d] || []).map((e) => `<button class="dotentry ${e.category}" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}" title="${esc(e.title + " " + (e.time || ""))}">${esc(e.title)} <span class="tiny">${esc(e.time)}</span></button>`).join("") : ""}</div>`;
+      html += `<div class="day ${valid ? "" : "off"} ${d === todayISO() ? "today" : ""}"><button class="daynum date-button" ${valid ? `data-day="${d}"` : "disabled"}>${valid ? day : ""}</button>${valid && adminPreview && cancelledRegular(d).length ? `<button class="btn small" data-day="${d}">↶</button>` : ""}${valid ? (byDate[d] || []).map((e) => `<button class="dotentry ${e.category}${e.pending ? " pending" : ""}" data-show="${esc(e.id)}" data-date="${e.date}" data-number="${e.number || ""}" title="${esc(e.title + " " + (e.time || "") + (e.pending ? " · Σε εκκρεμότητα" : ""))}">${esc(e.title)} <span class="tiny">${esc(e.time)}</span></button>`).join("") : ""}</div>`;
     }
     $("calendarBody").innerHTML = html + "</div>";
   }
@@ -401,7 +403,7 @@ import {
     } else if (r.kind === "lesson") {
       html += `${input("title", "Τμήμα / μάθημα", "text", r.title)}${input("start", "Πρώτη ημερομηνία", "date", r.start)}${input("time", "Ώρα", "time", r.time)}${input("cycles", "Πλήθος κύκλων", "number", r.cycles || 1, 'min="1" max="30"')}<label class="check"><input type="checkbox" id="equalCycles" ${Array.isArray(r.cycleSizes) ? "" : "checked"}> Ίσοι κύκλοι</label><div id="equalCycleField">${input("perCycle", "Μαθήματα ανά κύκλο", "number", r.perCycle || 10, 'min="1" max="150"')}</div><div class="full" id="customCycleFields"></div><label>Σύνολο μαθημάτων (αυτόματο)<input class="field" id="count" type="number" value="${(Number(r.cycles) || 1) * (Number(r.perCycle) || 1)}" readonly></label>${input("startingNumber", "Αριθμός πρώτου μαθήματος", "number", r.startingNumber, 'min="1" max="150"')}<div class="full inlinehelp">Το άθροισμα των μαθημάτων ανά κύκλο δίνει αυτόματα το σύνολο. Αν ξεκινήσεις τον Σεπτέμβριο 2026, τα μαθήματα συνεχίζονται στο 2027. Οι ακυρώσεις μεταθέτουν τα επόμενα μαθήματα χωρίς να καταναλώνουν αριθμό. Για ειδική συνέχεια μπορείς να ορίσεις αριθμό πρώτου μαθήματος.</div>`;
     } else if (r.kind === "external") {
-      html += `${input("title", "Τίτλος διοργάνωσης", "text", r.title)}${input("start", "Από", "date", r.start)}${input("end", "Έως", "date", r.end || r.start)}<div class="full inlinehelp">Εμφανίζεται χωρίς ώρα και δεν επηρεάζει τις δραστηριότητες του ΟΜΗ.</div>`;
+      html += `${input("title", "Τίτλος διοργάνωσης", "text", r.title)}${input("start", "Από", "date", r.start)}${input("end", "Έως", "date", r.end || r.start)}${input("time", "Ώρα (προαιρετική)", "time", r.time || "", "data-optional")}<div class="full inlinehelp">Η διοργάνωση δεν επηρεάζει τις δραστηριότητες του ΟΜΗ.</div>`;
     } else if (r.kind === "holiday") {
       html += `${input("title", "Ονομασία", "text", r.title)}${input("start", "Ημερομηνία", "date", r.start)}
         <label class="check"><input type="checkbox" id="editBlockRegular" ${r.blocks?.includes("regular") ? "checked" : ""}> Αναστολή τακτικών αγώνων</label>
@@ -695,7 +697,9 @@ import {
   function saveRecord() {
     if (
       [...$("adminContent").querySelectorAll("input[data-time24]")].some(
-        (el) => !validTime(el.value.trim()),
+        (el) =>
+          (el.value.trim() || !el.hasAttribute("data-optional")) &&
+          !validTime(el.value.trim()),
       )
     )
       return toast("Η ώρα πρέπει να είναι σε 24ωρη μορφή ΩΩ:ΛΛ (π.χ. 19:30).");
@@ -773,6 +777,8 @@ import {
       else r.cycleSizes = sizes;
     } else if (k === "external") {
       Object.assign(r, { title: v("title"), start: v("start"), end: v("end") });
+      if (v("time")) r.time = v("time");
+      else delete r.time;
       if (r.end < r.start) return toast("Έλεγξε τις ημερομηνίες.");
     } else if (k === "holiday") {
       Object.assign(r, {
@@ -1261,7 +1267,7 @@ import {
   }
   function renderRules() {
     $("adminContent").innerHTML =
-      `<h2>Κανόνες προγραμματισμού</h2><p class="muted">Οι παρακάτω κανόνες προέρχονται από το σχέδιο απαιτήσεων και τη μέχρι τώρα εργασία μας.</p><div class="stack"><div class="inlinehelp"><strong>Τακτικοί αγώνες</strong><div>Εβδομαδιαία επανάληψη, αρίθμηση 6ήμερων, μετατροπή τελευταίων σε 5ήμερα, εξαιρέσεις, ανεξάρτητες ημερίδες και μεταβολές ώρας.</div></div><div class="inlinehelp"><strong>Έκτακτες διοργανώσεις</strong><div>Πρότυπα ζευγών / ομάδων, βαθμίδα, διαφορετικές ώρες, μη συνεχόμενες ημερομηνίες, μετακίνηση ολόκληρου πολυημέρου.</div></div><div class="inlinehelp"><strong>Μαθήματα</strong><div>Κύκλοι, συνέχεια αρίθμησης, παράλειψη ακυρωμένων μαθημάτων και μεταφορά στο επόμενο διαθέσιμο εβδομαδιαίο μάθημα.</div></div><div class="inlinehelp"><strong>ΕΟΜ & άλλοι όμιλοι</strong><div>Εμφάνιση χωρίς ώρα και χωρίς αυτόματη επίδραση στο πρόγραμμα του ΟΜΗ.</div></div><div class="inlinehelp"><strong>Επόμενα στάδια</strong><div>Ασφαλής σύνδεση, πραγματική αποθήκευση, συγκρούσεις και αντικαταστάσεις τακτικών αγώνων, αργίες, προστασία παρελθόντων γεγονότων, μεταφορά στο νέο έτος, δημοσίευση και διαχείριση συγκρούσεων.</div></div></div>`;
+      `<h2>Κανόνες προγραμματισμού</h2><div class="stack"><div class="inlinehelp"><strong>Τακτικοί αγώνες</strong><div>Εβδομαδιαία επανάληψη, αρίθμηση 6ήμερων, μετατροπή τελευταίων σε 5ήμερα, εξαιρέσεις, ανεξάρτητες ημερίδες και μεταβολές ώρας.</div></div><div class="inlinehelp"><strong>Έκτακτες διοργανώσεις</strong><div>Πρότυπα ζευγών / ομάδων, βαθμίδα, διαφορετικές ώρες, μη συνεχόμενες ημερομηνίες, μετακίνηση ολόκληρου πολυημέρου.</div></div><div class="inlinehelp"><strong>Μαθήματα</strong><div>Κύκλοι, συνέχεια αρίθμησης, παράλειψη ακυρωμένων μαθημάτων και μεταφορά στο επόμενο διαθέσιμο εβδομαδιαίο μάθημα.</div></div><div class="inlinehelp"><strong>ΕΟΜ & άλλοι όμιλοι</strong><div>Εμφάνιση χωρίς ώρα και χωρίς αυτόματη επίδραση στο πρόγραμμα του ΟΜΗ.</div></div></div>`;
   }
   function openMove(id) {
     const r = data.find((x) => x.id === id);
@@ -1294,15 +1300,15 @@ import {
         });
         return;
       } else {
+        const links = data
+          .filter((record) => record.kind === "special")
+          .flatMap((record) => [
+            ...(record.replaces || []),
+            ...(record.keepsCancelled || []),
+          ])
+          .filter((link) => link.id === r.id);
         const linkedDates = new Set(
-          data
-            .filter((record) => record.kind === "special")
-            .flatMap((record) => [
-              ...(record.replaces || []),
-              ...(record.keepsCancelled || []),
-            ])
-            .filter((link) => link.id === r.id)
-            .map((link) => regularSlot(r, link.date)),
+          links.map((link) => regularSlot(r, link.date)),
         );
         r.start = addDays(r.start, diff);
         if (r.end) r.end = addDays(r.end, diff);
@@ -1319,6 +1325,17 @@ import {
               v.date ? { ...v, date: addDays(v.date, diff) } : v,
             ]),
           );
+        if (links.length) {
+          const dates = new Set(sessions(r).map((event) => event.date));
+          r.excluded = [
+            ...new Set([
+              ...(r.excluded || []),
+              ...links
+                .filter((link) => dates.has(link.date))
+                .map((link) => regularSlot(r, link.date)),
+            ]),
+          ];
+        }
       }
       persist();
       close();

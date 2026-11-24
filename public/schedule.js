@@ -217,7 +217,7 @@ function sessions(r, data) {
       if (!r.excluded?.includes(d))
         out.push({
           date: d,
-          time: "",
+          time: r.time || "",
           title: r.title,
           category: cat(r),
           id: r.id,
@@ -241,6 +241,8 @@ function sessions(r, data) {
   return out;
 }
 export {
+  greekHolidays,
+  countSpecial,
   addDays,
   weekday,
   fmt,

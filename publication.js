@@ -96,7 +96,11 @@ const validRecord = (r) => {
         )
       );
     case "external":
-      return date(r.start) && (r.end === undefined || range(r));
+      return (
+        date(r.start) &&
+        (r.end === undefined || range(r)) &&
+        optional(r.time, (v) => v === "" || time(v))
+      );
     case "other":
       return date(r.start) && time(r.time);
     case "holiday":

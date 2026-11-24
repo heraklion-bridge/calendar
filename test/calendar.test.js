@@ -1,6 +1,11 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { once } from "node:events";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import { createCalendar, passwordHash } from "../server.js";
 import { publication, validateRecords } from "../publication.js";
 import { sessions, automaticHolidays } from "../public/schedule.js";
@@ -124,6 +129,37 @@ test("pending records retain the previous revision and only approved replacement
   const restored = build([regular, { ...moved, pending: false }], approved);
   assert(restored.events.some((e) => e.id === "r1" && e.date === "2027-02-01"));
 });
+test("extending a prior cutoff cannot publish previously hidden pending entries", () => {
+  const hidden = {
+    ...special,
+    id: "hidden",
+    dates: ["2027-04-01"],
+    times: ["19:00"],
+    replaces: [],
+  };
+  const draft = {
+    records: [regular, special, hidden],
+    cutoff: "2027-03",
+    revision: 0,
+  };
+  const previous = publication(draft, null, "2027-01-01");
+  const next = publication(
+    {
+      ...draft,
+      cutoff: "2027-04",
+      records: [
+        regular,
+        { ...special, pending: true },
+        { ...hidden, pending: true },
+      ],
+    },
+    previous,
+    "2027-01-01",
+  );
+  assert(!next.events.some((e) => e.id === "hidden"));
+  assert.equal(next.events.filter((e) => e.id === special.id).length, 2);
+});
+
 test("historical corrections require explicit activation and report impact", () => {
   const draft = { records: [regular, special], cutoff: "2027-03", revision: 0 };
   const original = publication(draft, null, "2027-03-05");
@@ -144,17 +180,21 @@ test("historical corrections require explicit activation and report impact", () 
 });
 
 test("authenticated draft, exact legacy JSON, CSRF, concurrent edits, atomic publish and rollback", async (t) => {
-  const origin = "http://127.0.0.1:3000";
+  const origin = "https://calendar.example.org";
+  const directory = mkdtempSync(join(tmpdir(), "omh-integration-"));
+  const dbPath = join(directory, "calendar.sqlite");
   const password = "synthetic integration-test phrase";
   const server = createCalendar({
     origin,
-    local: true,
-    dbPath: ":memory:",
+    dbPath,
     users: { admin: await passwordHash(password) },
   });
   server.listen(0, "127.0.0.1");
   await once(server, "listening");
-  t.after(() => server.close());
+  t.after(async () => {
+    await new Promise((resolve) => server.close(resolve));
+    rmSync(directory, { recursive: true, force: true });
+  });
   const base = "http://127.0.0.1:" + server.address().port + "/api/";
   const call = (route, body, cookie, source = origin) =>
     fetch(
@@ -191,7 +231,10 @@ test("authenticated draft, exact legacy JSON, CSRF, concurrent edits, atomic pub
   const login = await call("login", { username: "admin", password });
   await value(login);
   const setCookie = login.headers.get("set-cookie");
-  assert.match(setCookie, /HttpOnly; SameSite=Strict/);
+  assert.match(
+    setCookie,
+    /^__Host-omh_session=.+; HttpOnly; SameSite=Strict; Secure$/,
+  );
   const cookie = setCookie.split(";")[0];
   const records = [
     [
@@ -272,6 +315,34 @@ test("authenticated draft, exact legacy JSON, CSRF, concurrent edits, atomic pub
     retroactive: true,
   };
   const next = await value(await call("preview", second, cookie));
+  const adminDb = new DatabaseSync(dbPath);
+  adminDb.exec(
+    "CREATE TRIGGER fail_publish BEFORE UPDATE OF published ON state BEGIN SELECT RAISE(ABORT,'test storage failure'); END",
+  );
+  try {
+    const failed = await call(
+      "publish",
+      { ...second, token: next.token },
+      cookie,
+    );
+    assert.equal(failed.status, 500);
+    assert(!(await failed.text()).includes("test storage failure"));
+    assert.deepEqual(
+      (await value(await call("public"))).events,
+      preview.events,
+    );
+    assert.equal(
+      (await value(await call("draft", undefined, cookie))).revision,
+      2,
+    );
+    assert.equal(
+      (await value(await call("history", undefined, cookie))).versions.length,
+      1,
+    );
+  } finally {
+    adminDb.exec("DROP TRIGGER fail_publish");
+    adminDb.close();
+  }
   await value(await call("publish", { ...second, token: next.token }, cookie));
   await value(await call("restore", { revision: 3, id: 1 }, cookie));
   assert.deepEqual((await value(await call("public"))).events, preview.events);
@@ -279,6 +350,32 @@ test("authenticated draft, exact legacy JSON, CSRF, concurrent edits, atomic pub
     (await value(await call("draft", undefined, cookie))).records,
     [],
   );
+  const destination = join(directory, "backup.sqlite");
+  const backup = spawnSync(
+    process.execPath,
+    [new URL("../scripts/backup.js", import.meta.url).pathname, destination],
+    { env: { ...process.env, DB_PATH: dbPath }, encoding: "utf8" },
+  );
+  assert.equal(backup.status, 0, backup.stderr);
+  const restored = new DatabaseSync(destination, { readOnly: true });
+  try {
+    assert.equal(
+      restored.prepare("PRAGMA integrity_check").get().integrity_check,
+      "ok",
+    );
+    const published = restored
+      .prepare(
+        "SELECT events FROM versions JOIN state ON versions.id=state.published",
+      )
+      .get();
+    assert.deepEqual(JSON.parse(published.events), preview.events);
+    assert.equal(
+      restored.prepare("SELECT revision FROM state").get().revision,
+      4,
+    );
+  } finally {
+    restored.close();
+  }
   await value(await call("logout", {}, cookie));
   assert.equal((await call("draft", undefined, cookie)).status, 401);
 });

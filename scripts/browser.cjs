@@ -42,6 +42,25 @@ const fs = require("node:fs/promises");
     await admin.locator("#password").fill(password);
     await admin.locator("#loginForm button").click();
     await admin.locator("#saveDraft").waitFor();
+    // Exercise management surfaces that use the shared schedule helpers.
+    await admin.locator("#kind").selectOption("special");
+    await admin.locator("#template").selectOption("Διήμερο Ομάδων");
+    assert.equal(await admin.locator("[id^='sd']").count(), 2);
+    await admin.locator("#pendingRecord").check();
+    await admin.locator("#saveRecord").click();
+    await admin.getByText("Σε εκκρεμότητα", { exact: true }).first().waitFor();
+    for (const section of [
+      "exceptions",
+      "holidays",
+      "rollover",
+      "clearYear",
+      "rules",
+    ]) {
+      await admin.locator('[data-section="' + section + '"]').click();
+      await admin.locator("#adminContent h2").waitFor();
+    }
+    await admin.locator('[data-section="holidays"]').click();
+    assert((await admin.locator("#autoHolidayList button").count()) > 0);
     const records = [
       {
         id: "rsa",
@@ -78,13 +97,11 @@ const fs = require("node:fs/promises");
       },
     ];
     const backup = { format: "omh-calendar-demo", version: 1, records };
-    await admin
-      .locator("#importFile")
-      .setInputFiles({
-        name: "synthetic.json",
-        mimeType: "application/json",
-        buffer: Buffer.from(JSON.stringify(backup)),
-      });
+    await admin.locator("#importFile").setInputFiles({
+      name: "synthetic.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify(backup)),
+    });
     await admin
       .getByText("Όλες οι καταχωρίσεις", { exact: true })
       .last()
