@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="el">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ΟΜΗ | Ημερολόγιο & Διαχείριση</title>
+    <link rel="stylesheet" href="calendar.css" />
+  </head>
+  <body>
+    <header class="top">
+      <div class="shell topin">
+        <div class="logo">
+          <img class="club-logo" alt="Όμιλος Μπριτζ Ηρακλείου" src="logo.png" />
+          <div>
+            <strong>Ημερολόγιο ΟΜΗ</strong
+            ><small>Αγωνιστικό & εκπαιδευτικό πρόγραμμα</small>
+          </div>
+        </div>
+        <div class="tabs">
+          <button
+            class="theme-switch"
+            id="themeToggle"
+            type="button"
+            aria-label="Εναλλαγή φωτεινής και σκοτεινής προβολής"
+          >
+            ☾ Σκοτεινό</button
+          ><button class="tab active" id="tabPublic">Ημερολόγιο αθλητών</button
+          ><button class="tab" id="tabAdmin">⚙ Διαχείριση</button>
+        </div>
+      </div>
+    </header>
+    <main class="shell page">
+      <section id="access" class="panel hidden">
+        <form id="loginForm" class="row">
+          <label
+            >Χρήστης
+            <input class="field" id="username" autocomplete="username" required
+          /></label>
+          <label
+            >Κωδικός
+            <input
+              class="field"
+              id="password"
+              type="password"
+              autocomplete="current-password"
+              required
+          /></label>
+          <button class="btn primary">Σύνδεση</button>
+        </form>
+      </section>
+      <div id="tools" class="panel hidden production-toolbar">
+        <div class="row">
+          <button class="btn" id="draftView">Προβολή πρόχειρου</button>
+          <label
+            >Δημόσια προβολή έως και
+            <input class="field" type="month" id="cutoff"
+          /></label>
+          <button class="btn" id="saveDraft">Αποθήκευση πρόχειρου</button>
+          <button class="btn" id="preview">Προεπισκόπηση δημοσίευσης</button>
+          <button class="btn primary" id="publish" disabled>
+            Αποθήκευση &amp; δημοσίευση αλλαγών
+          </button>
+          <button class="btn" id="history">Ιστορικό δημοσιεύσεων</button>
+          <button class="btn" id="logout">Αποσύνδεση</button>
+        </div>
+        <label class="check"
+          ><input type="checkbox" id="retroactive" /> Να εφαρμοστούν αναδρομικές
+          διορθώσεις</label
+        >
+        <div
+          id="productionStatus"
+          class="production-status"
+          role="status"
+        ></div>
+        <div id="historyList"></div>
+      </div>
+      <section id="public">
+        <div class="panel">
+          <div class="spread">
+            <div class="row" id="viewBtns">
+              <button class="btn active" data-view="agenda">Ατζέντα</button
+              ><button class="btn" data-view="week">Εβδομάδα</button
+              ><button class="btn" data-view="month">Μήνας</button
+              ><button class="btn" data-view="year">Έτος</button>
+            </div>
+            <div class="row">
+              <button class="btn" id="today">Σήμερα</button
+              ><button class="btn" id="prev">‹</button
+              ><strong id="periodLabel"></strong
+              ><input
+                type="month"
+                class="field"
+                id="jumpMonth"
+                aria-label="Επιλογή μήνα και έτους"
+              /><button class="btn" id="next">›</button>
+            </div>
+            <input
+              class="field search"
+              id="search"
+              placeholder="Αναζήτηση διοργάνωσης…"
+              aria-label="Αναζήτηση"
+            />
+          </div>
+          <div class="filters" id="filters"></div>
+          <div id="restoreLookup" class="row hidden">
+            <label for="restoreDate">Έλεγχος ημέρας / επαναφορά</label
+            ><input
+              class="field"
+              type="text"
+              data-date-picker
+              readonly
+              inputmode="none"
+              id="restoreDate"
+            /><button class="btn" id="restoreOpen">Άνοιγμα ημέρας</button>
+          </div>
+          <div class="counter" id="count"></div>
+          <div id="yearOptions" class="year-options hidden">
+            <label class="check"
+              ><input type="checkbox" id="weekendOnly" /> Προβολή ολόκληρης
+              εβδομάδας</label
+            ><span class="tiny"
+              >Χωρίς επιλογή εμφανίζονται μόνο ημέρες με γεγονότα των ενεργών
+              φίλτρων.</span
+            >
+          </div>
+          <div id="calendarBody"></div>
+        </div>
+      </section>
+      <section id="admin" class="hidden">
+        <div class="hero">
+          <div class="row">
+            <button class="btn" id="export">↓ Εξαγωγή JSON</button
+            ><button class="btn" id="importBtn">↑ Εισαγωγή JSON</button
+            ><input
+              type="file"
+              id="importFile"
+              accept=".json,application/json"
+              hidden
+            />
+          </div>
+        </div>
+        <div class="adminlayout">
+          <aside class="panel side" id="adminMenu">
+            <button class="sidebtn active" data-section="new">
+              ＋ Νέα καταχώριση</button
+            ><button class="sidebtn" data-section="manage">
+              ▤ Όλες οι καταχωρίσεις</button
+            ><button class="sidebtn" data-section="exceptions">
+              ↔ Μετακινήσεις & εξαιρέσεις</button
+            ><button class="sidebtn" data-section="holidays">
+              Αργίες & κλείσιμο</button
+            ><button class="sidebtn" data-section="rollover">
+              Επόμενο έτος</button
+            ><button class="sidebtn" data-section="clearYear">
+              Εκκαθάριση έτους</button
+            ><button class="sidebtn" data-section="rules">
+              ⚙ Κανόνες προγράμματος
+            </button>
+          </aside>
+          <div><div class="panel" id="adminContent"></div></div>
+        </div>
+      </section>
+      <div class="footer">Όμιλος Μπριτζ Ηρακλείου</div>
+    </main>
+    <div id="modalHost"></div>
+    <div id="toast" class="toast hidden" role="status"></div>
+    <script type="module" src="calendar.js"></script>
+  </body>
+</html>
