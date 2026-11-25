@@ -95,7 +95,7 @@
     },
     {
       "id": "event-13",
-      "date": "2026-09-29",
+      "date": "2026-10-01",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 2",
       "category": "lesson",
@@ -115,7 +115,7 @@
     },
     {
       "id": "event-15",
-      "date": "2026-10-06",
+      "date": "2026-10-08",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 2",
       "category": "lesson",
@@ -136,16 +136,6 @@
     {
       "id": "event-17",
       "date": "2026-10-13",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 3,
-      "cycle": 1,
-      "cycleNumber": 3
-    },
-    {
-      "id": "event-18",
-      "date": "2026-10-13",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -154,7 +144,7 @@
       "cycleNumber": 1
     },
     {
-      "id": "event-19",
+      "id": "event-18",
       "date": "2026-10-14",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -162,6 +152,16 @@
       "number": 1,
       "cycle": 1,
       "cycleNumber": 1
+    },
+    {
+      "id": "event-19",
+      "date": "2026-10-15",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 3,
+      "cycle": 1,
+      "cycleNumber": 3
     },
     {
       "id": "event-20",
@@ -176,16 +176,6 @@
     {
       "id": "event-21",
       "date": "2026-10-20",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 4,
-      "cycle": 1,
-      "cycleNumber": 4
-    },
-    {
-      "id": "event-22",
-      "date": "2026-10-20",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -194,7 +184,7 @@
       "cycleNumber": 2
     },
     {
-      "id": "event-23",
+      "id": "event-22",
       "date": "2026-10-21",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -202,6 +192,16 @@
       "number": 2,
       "cycle": 1,
       "cycleNumber": 2
+    },
+    {
+      "id": "event-23",
+      "date": "2026-10-22",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 4,
+      "cycle": 1,
+      "cycleNumber": 4
     },
     {
       "id": "event-24",
@@ -228,16 +228,6 @@
     {
       "id": "event-26",
       "date": "2026-10-27",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 5,
-      "cycle": 1,
-      "cycleNumber": 5
-    },
-    {
-      "id": "event-27",
-      "date": "2026-10-27",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -246,7 +236,7 @@
       "cycleNumber": 3
     },
     {
-      "id": "event-28",
+      "id": "event-27",
       "date": "2026-10-28",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -256,11 +246,21 @@
       "cycleNumber": 3
     },
     {
-      "id": "event-29",
+      "id": "event-28",
       "date": "2026-10-28",
       "time": "",
       "title": "28η Οκτωβρίου",
       "category": "holiday"
+    },
+    {
+      "id": "event-29",
+      "date": "2026-10-29",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 5,
+      "cycle": 1,
+      "cycleNumber": 5
     },
     {
       "id": "event-30",
@@ -275,16 +275,6 @@
     {
       "id": "event-31",
       "date": "2026-11-03",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 6,
-      "cycle": 1,
-      "cycleNumber": 6
-    },
-    {
-      "id": "event-32",
-      "date": "2026-11-03",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -293,7 +283,7 @@
       "cycleNumber": 4
     },
     {
-      "id": "event-33",
+      "id": "event-32",
       "date": "2026-11-04",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -301,6 +291,16 @@
       "number": 4,
       "cycle": 1,
       "cycleNumber": 4
+    },
+    {
+      "id": "event-33",
+      "date": "2026-11-05",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 6,
+      "cycle": 1,
+      "cycleNumber": 6
     },
     {
       "id": "event-34",
@@ -337,16 +337,6 @@
     {
       "id": "event-37",
       "date": "2026-11-10",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 7,
-      "cycle": 1,
-      "cycleNumber": 7
-    },
-    {
-      "id": "event-38",
-      "date": "2026-11-10",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -355,7 +345,7 @@
       "cycleNumber": 5
     },
     {
-      "id": "event-39",
+      "id": "event-38",
       "date": "2026-11-11",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -365,7 +355,7 @@
       "cycleNumber": 5
     },
     {
-      "id": "event-40",
+      "id": "event-39",
       "date": "2026-11-11",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -375,6 +365,16 @@
       "groupTotal": 6,
       "independent": false,
       "simultaneous": true
+    },
+    {
+      "id": "event-40",
+      "date": "2026-11-12",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 7,
+      "cycle": 1,
+      "cycleNumber": 7
     },
     {
       "id": "event-41",
@@ -450,16 +450,6 @@
     {
       "id": "event-48",
       "date": "2026-11-17",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 8,
-      "cycle": 1,
-      "cycleNumber": 8
-    },
-    {
-      "id": "event-49",
-      "date": "2026-11-17",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -468,7 +458,7 @@
       "cycleNumber": 6
     },
     {
-      "id": "event-50",
+      "id": "event-49",
       "date": "2026-11-18",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -478,7 +468,7 @@
       "cycleNumber": 6
     },
     {
-      "id": "event-51",
+      "id": "event-50",
       "date": "2026-11-18",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -488,6 +478,16 @@
       "groupTotal": 6,
       "independent": false,
       "simultaneous": true
+    },
+    {
+      "id": "event-51",
+      "date": "2026-11-19",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 8,
+      "cycle": 1,
+      "cycleNumber": 8
     },
     {
       "id": "event-52",
@@ -548,16 +548,6 @@
     {
       "id": "event-57",
       "date": "2026-11-24",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 9,
-      "cycle": 1,
-      "cycleNumber": 9
-    },
-    {
-      "id": "event-58",
-      "date": "2026-11-24",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -566,7 +556,7 @@
       "cycleNumber": 7
     },
     {
-      "id": "event-59",
+      "id": "event-58",
       "date": "2026-11-25",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -576,7 +566,7 @@
       "cycleNumber": 7
     },
     {
-      "id": "event-60",
+      "id": "event-59",
       "date": "2026-11-25",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -586,6 +576,16 @@
       "groupTotal": 6,
       "independent": false,
       "simultaneous": true
+    },
+    {
+      "id": "event-60",
+      "date": "2026-11-26",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 9,
+      "cycle": 1,
+      "cycleNumber": 9
     },
     {
       "id": "event-61",
@@ -646,16 +646,6 @@
     {
       "id": "event-66",
       "date": "2026-12-01",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 10,
-      "cycle": 2,
-      "cycleNumber": 1
-    },
-    {
-      "id": "event-67",
-      "date": "2026-12-01",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -664,7 +654,7 @@
       "cycleNumber": 8
     },
     {
-      "id": "event-68",
+      "id": "event-67",
       "date": "2026-12-02",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -674,7 +664,7 @@
       "cycleNumber": 8
     },
     {
-      "id": "event-69",
+      "id": "event-68",
       "date": "2026-12-02",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -684,6 +674,16 @@
       "groupTotal": 6,
       "independent": false,
       "simultaneous": true
+    },
+    {
+      "id": "event-69",
+      "date": "2026-12-03",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 10,
+      "cycle": 2,
+      "cycleNumber": 1
     },
     {
       "id": "event-70",
@@ -744,16 +744,6 @@
     {
       "id": "event-75",
       "date": "2026-12-08",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 11,
-      "cycle": 2,
-      "cycleNumber": 2
-    },
-    {
-      "id": "event-76",
-      "date": "2026-12-08",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -762,7 +752,7 @@
       "cycleNumber": 9
     },
     {
-      "id": "event-77",
+      "id": "event-76",
       "date": "2026-12-09",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -772,7 +762,7 @@
       "cycleNumber": 9
     },
     {
-      "id": "event-78",
+      "id": "event-77",
       "date": "2026-12-09",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -782,6 +772,16 @@
       "groupTotal": 6,
       "independent": false,
       "simultaneous": true
+    },
+    {
+      "id": "event-78",
+      "date": "2026-12-10",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 11,
+      "cycle": 2,
+      "cycleNumber": 2
     },
     {
       "id": "event-79",
@@ -860,16 +860,6 @@
     {
       "id": "event-87",
       "date": "2026-12-15",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 12,
-      "cycle": 2,
-      "cycleNumber": 3
-    },
-    {
-      "id": "event-88",
-      "date": "2026-12-15",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -878,7 +868,7 @@
       "cycleNumber": 1
     },
     {
-      "id": "event-89",
+      "id": "event-88",
       "date": "2026-12-16",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -888,7 +878,7 @@
       "cycleNumber": 1
     },
     {
-      "id": "event-90",
+      "id": "event-89",
       "date": "2026-12-16",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -898,6 +888,16 @@
       "groupTotal": 6,
       "independent": false,
       "simultaneous": true
+    },
+    {
+      "id": "event-90",
+      "date": "2026-12-17",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 12,
+      "cycle": 2,
+      "cycleNumber": 3
     },
     {
       "id": "event-91",
@@ -958,16 +958,6 @@
     {
       "id": "event-96",
       "date": "2026-12-22",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 13,
-      "cycle": 2,
-      "cycleNumber": 4
-    },
-    {
-      "id": "event-97",
-      "date": "2026-12-22",
       "time": "20:45",
       "title": "Αρχάριοι 1",
       "category": "lesson",
@@ -976,7 +966,7 @@
       "cycleNumber": 2
     },
     {
-      "id": "event-98",
+      "id": "event-97",
       "date": "2026-12-23",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -986,7 +976,7 @@
       "cycleNumber": 2
     },
     {
-      "id": "event-99",
+      "id": "event-98",
       "date": "2026-12-23",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -998,28 +988,28 @@
       "simultaneous": true
     },
     {
-      "id": "event-100",
+      "id": "event-99",
       "date": "2026-12-24",
       "time": "",
       "title": "ΑΡΓΙΑ",
       "category": "holiday"
     },
     {
-      "id": "event-101",
+      "id": "event-100",
       "date": "2026-12-25",
       "time": "",
       "title": "Χριστούγεννα",
       "category": "holiday"
     },
     {
-      "id": "event-102",
+      "id": "event-101",
       "date": "2026-12-26",
       "time": "",
       "title": "Σύναξη της Θεοτόκου",
       "category": "holiday"
     },
     {
-      "id": "event-103",
+      "id": "event-102",
       "date": "2026-12-27",
       "time": "18:30",
       "title": "ΕΟΡΤΑΣΤΙΚΗ",
@@ -1029,7 +1019,7 @@
       "grade": "4η"
     },
     {
-      "id": "event-104",
+      "id": "event-103",
       "date": "2026-12-28",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -1038,7 +1028,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-105",
+      "id": "event-104",
       "date": "2026-12-29",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -1048,17 +1038,7 @@
       "cycleNumber": 5
     },
     {
-      "id": "event-106",
-      "date": "2026-12-29",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 14,
-      "cycle": 2,
-      "cycleNumber": 5
-    },
-    {
-      "id": "event-107",
+      "id": "event-105",
       "date": "2026-12-30",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -1067,21 +1047,21 @@
       "simultaneous": true
     },
     {
-      "id": "event-108",
+      "id": "event-106",
       "date": "2026-12-31",
       "time": "",
       "title": "ΑΡΓΙΑ",
       "category": "holiday"
     },
     {
-      "id": "event-109",
+      "id": "event-107",
       "date": "2027-01-01",
       "time": "",
       "title": "Πρωτοχρονιά",
       "category": "holiday"
     },
     {
-      "id": "event-110",
+      "id": "event-108",
       "date": "2027-01-03",
       "time": "10:30",
       "title": "Μαραθώνιος",
@@ -1091,7 +1071,7 @@
       "grade": "4η"
     },
     {
-      "id": "event-111",
+      "id": "event-109",
       "date": "2027-01-03",
       "time": "15:30",
       "title": "Μαραθώνιος",
@@ -1101,7 +1081,7 @@
       "grade": "4η"
     },
     {
-      "id": "event-112",
+      "id": "event-110",
       "date": "2027-01-03",
       "time": "18:00",
       "title": "Μαραθώνιος",
@@ -1111,7 +1091,7 @@
       "grade": "4η"
     },
     {
-      "id": "event-113",
+      "id": "event-111",
       "date": "2027-01-04",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -1123,7 +1103,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-114",
+      "id": "event-112",
       "date": "2027-01-05",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -1133,24 +1113,24 @@
       "cycleNumber": 6
     },
     {
-      "id": "event-115",
-      "date": "2027-01-05",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 15,
-      "cycle": 2,
-      "cycleNumber": 6
-    },
-    {
-      "id": "event-116",
+      "id": "event-113",
       "date": "2027-01-06",
       "time": "",
       "title": "Θεοφάνεια",
       "category": "holiday"
     },
     {
-      "id": "event-117",
+      "id": "event-114",
+      "date": "2027-01-07",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 13,
+      "cycle": 2,
+      "cycleNumber": 4
+    },
+    {
+      "id": "event-115",
       "date": "2027-01-07",
       "time": "19:30",
       "title": "Ζεύγη 1-6",
@@ -1162,7 +1142,7 @@
       "simultaneous": false
     },
     {
-      "id": "event-118",
+      "id": "event-116",
       "date": "2027-01-10",
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
@@ -1174,7 +1154,7 @@
       "simultaneous": false
     },
     {
-      "id": "event-119",
+      "id": "event-117",
       "date": "2027-01-11",
       "time": "19:00",
       "title": "Προχωρημένοι",
@@ -1184,7 +1164,7 @@
       "cycleNumber": 8
     },
     {
-      "id": "event-120",
+      "id": "event-118",
       "date": "2027-01-11",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -1196,7 +1176,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-121",
+      "id": "event-119",
       "date": "2027-01-12",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -1206,17 +1186,7 @@
       "cycleNumber": 7
     },
     {
-      "id": "event-122",
-      "date": "2027-01-12",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 16,
-      "cycle": 2,
-      "cycleNumber": 7
-    },
-    {
-      "id": "event-123",
+      "id": "event-120",
       "date": "2027-01-12",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -1226,7 +1196,7 @@
       "cycleNumber": 3
     },
     {
-      "id": "event-124",
+      "id": "event-121",
       "date": "2027-01-13",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -1236,7 +1206,7 @@
       "cycleNumber": 3
     },
     {
-      "id": "event-125",
+      "id": "event-122",
       "date": "2027-01-13",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -1248,7 +1218,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-126",
+      "id": "event-123",
+      "date": "2027-01-14",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 14,
+      "cycle": 2,
+      "cycleNumber": 5
+    },
+    {
+      "id": "event-124",
       "date": "2027-01-14",
       "time": "19:30",
       "title": "Ζεύγη 1-6",
@@ -1260,21 +1240,21 @@
       "simultaneous": false
     },
     {
-      "id": "event-127",
+      "id": "event-125",
       "date": "2027-01-15",
       "time": "",
       "title": "ΠΑΝ. ΜΙΚΤΩΝ ΟΜΑΔΩΝ",
       "category": "external"
     },
     {
-      "id": "event-128",
+      "id": "event-126",
       "date": "2027-01-16",
       "time": "",
       "title": "ΠΑΝ. ΜΙΚΤΩΝ ΟΜΑΔΩΝ",
       "category": "external"
     },
     {
-      "id": "event-129",
+      "id": "event-127",
       "date": "2027-01-17",
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
@@ -1286,14 +1266,14 @@
       "simultaneous": false
     },
     {
-      "id": "event-130",
+      "id": "event-128",
       "date": "2027-01-17",
       "time": "",
       "title": "ΠΑΝ. ΜΙΚΤΩΝ ΟΜΑΔΩΝ",
       "category": "external"
     },
     {
-      "id": "event-131",
+      "id": "event-129",
       "date": "2027-01-18",
       "time": "19:00",
       "title": "Προχωρημένοι",
@@ -1303,7 +1283,7 @@
       "cycleNumber": 9
     },
     {
-      "id": "event-132",
+      "id": "event-130",
       "date": "2027-01-18",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -1315,7 +1295,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-133",
+      "id": "event-131",
       "date": "2027-01-19",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -1325,17 +1305,7 @@
       "cycleNumber": 8
     },
     {
-      "id": "event-134",
-      "date": "2027-01-19",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 17,
-      "cycle": 2,
-      "cycleNumber": 8
-    },
-    {
-      "id": "event-135",
+      "id": "event-132",
       "date": "2027-01-19",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -1345,7 +1315,7 @@
       "cycleNumber": 4
     },
     {
-      "id": "event-136",
+      "id": "event-133",
       "date": "2027-01-20",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -1355,7 +1325,7 @@
       "cycleNumber": 4
     },
     {
-      "id": "event-137",
+      "id": "event-134",
       "date": "2027-01-20",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -1367,7 +1337,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-138",
+      "id": "event-135",
+      "date": "2027-01-21",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 15,
+      "cycle": 2,
+      "cycleNumber": 6
+    },
+    {
+      "id": "event-136",
       "date": "2027-01-21",
       "time": "19:30",
       "title": "ΠΠΖ Προκριματικά 1-6 & 1-9",
@@ -1376,7 +1356,7 @@
       "total": 3
     },
     {
-      "id": "event-139",
+      "id": "event-137",
       "date": "2027-01-22",
       "time": "20:30",
       "title": "ΠΠΖ Προκριματικά 1-6 & 1-9",
@@ -1385,7 +1365,7 @@
       "total": 3
     },
     {
-      "id": "event-140",
+      "id": "event-138",
       "date": "2027-01-23",
       "time": "18:30",
       "title": "2η Μαθητική Ταυτόχρονο",
@@ -1394,7 +1374,7 @@
       "total": 1
     },
     {
-      "id": "event-141",
+      "id": "event-139",
       "date": "2027-01-24",
       "time": "10:30",
       "title": "ΠΠΖ Προκριματικά 1-6 & 1-9",
@@ -1403,7 +1383,7 @@
       "total": 3
     },
     {
-      "id": "event-142",
+      "id": "event-140",
       "date": "2027-01-24",
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
@@ -1415,7 +1395,7 @@
       "simultaneous": false
     },
     {
-      "id": "event-143",
+      "id": "event-141",
       "date": "2027-01-25",
       "time": "19:00",
       "title": "Προχωρημένοι",
@@ -1425,7 +1405,7 @@
       "cycleNumber": 10
     },
     {
-      "id": "event-144",
+      "id": "event-142",
       "date": "2027-01-25",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -1437,7 +1417,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-145",
+      "id": "event-143",
       "date": "2027-01-26",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -1447,17 +1427,7 @@
       "cycleNumber": 9
     },
     {
-      "id": "event-146",
-      "date": "2027-01-26",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 18,
-      "cycle": 2,
-      "cycleNumber": 9
-    },
-    {
-      "id": "event-147",
+      "id": "event-144",
       "date": "2027-01-26",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -1467,7 +1437,7 @@
       "cycleNumber": 5
     },
     {
-      "id": "event-148",
+      "id": "event-145",
       "date": "2027-01-27",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -1477,7 +1447,7 @@
       "cycleNumber": 5
     },
     {
-      "id": "event-149",
+      "id": "event-146",
       "date": "2027-01-27",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -1489,7 +1459,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-150",
+      "id": "event-147",
+      "date": "2027-01-28",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 16,
+      "cycle": 2,
+      "cycleNumber": 7
+    },
+    {
+      "id": "event-148",
       "date": "2027-01-28",
       "time": "19:30",
       "title": "Ζεύγη 1-6",
@@ -1501,7 +1481,7 @@
       "simultaneous": false
     },
     {
-      "id": "event-151",
+      "id": "event-149",
       "date": "2027-01-29",
       "time": "20:30",
       "title": "ΠΠΖ Προκριματικά 1-11 & 1-16",
@@ -1510,14 +1490,14 @@
       "total": 3
     },
     {
-      "id": "event-152",
+      "id": "event-150",
       "date": "2027-01-29",
       "time": "",
       "title": "ΠΑΝ. ΖΕΥΓΩΝ Προκριματικά",
       "category": "external"
     },
     {
-      "id": "event-153",
+      "id": "event-151",
       "date": "2027-01-30",
       "time": "18:30",
       "title": "ΠΠΖ Προκριματικά 1-11 & 1-16",
@@ -1526,14 +1506,14 @@
       "total": 3
     },
     {
-      "id": "event-154",
+      "id": "event-152",
       "date": "2027-01-30",
       "time": "",
       "title": "ΠΑΝ. ΖΕΥΓΩΝ Προκριματικά",
       "category": "external"
     },
     {
-      "id": "event-155",
+      "id": "event-153",
       "date": "2027-01-31",
       "time": "10:30",
       "title": "ΠΠΖ Προκριματικά 1-11 & 1-16",
@@ -1542,14 +1522,14 @@
       "total": 3
     },
     {
-      "id": "event-156",
+      "id": "event-154",
       "date": "2027-01-31",
       "time": "",
       "title": "ΠΑΝ. ΖΕΥΓΩΝ Προκριματικά",
       "category": "external"
     },
     {
-      "id": "event-157",
+      "id": "event-155",
       "date": "2027-02-01",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -1561,7 +1541,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-158",
+      "id": "event-156",
       "date": "2027-02-02",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -1571,17 +1551,7 @@
       "cycleNumber": 10
     },
     {
-      "id": "event-159",
-      "date": "2027-02-02",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 19,
-      "cycle": 2,
-      "cycleNumber": 10
-    },
-    {
-      "id": "event-160",
+      "id": "event-157",
       "date": "2027-02-02",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -1591,7 +1561,7 @@
       "cycleNumber": 6
     },
     {
-      "id": "event-161",
+      "id": "event-158",
       "date": "2027-02-03",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -1601,7 +1571,7 @@
       "cycleNumber": 6
     },
     {
-      "id": "event-162",
+      "id": "event-159",
       "date": "2027-02-03",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -1613,7 +1583,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-163",
+      "id": "event-160",
+      "date": "2027-02-04",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 17,
+      "cycle": 2,
+      "cycleNumber": 8
+    },
+    {
+      "id": "event-161",
       "date": "2027-02-04",
       "time": "19:30",
       "title": "Ζεύγη 1-6",
@@ -1625,14 +1605,14 @@
       "simultaneous": false
     },
     {
-      "id": "event-164",
+      "id": "event-162",
       "date": "2027-02-07",
       "time": "10:30",
       "title": "ΚΟΠΗ ΠΙΤΑΣ ΟΜΗ/ΟΑΜΧν/ΡΟΜ",
       "category": "other"
     },
     {
-      "id": "event-165",
+      "id": "event-163",
       "date": "2027-02-08",
       "time": "19:00",
       "title": "Προχωρημένοι",
@@ -1642,7 +1622,7 @@
       "cycleNumber": 11
     },
     {
-      "id": "event-166",
+      "id": "event-164",
       "date": "2027-02-08",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -1654,7 +1634,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-167",
+      "id": "event-165",
       "date": "2027-02-09",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -1664,17 +1644,7 @@
       "cycleNumber": 1
     },
     {
-      "id": "event-168",
-      "date": "2027-02-09",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 20,
-      "cycle": 3,
-      "cycleNumber": 1
-    },
-    {
-      "id": "event-169",
+      "id": "event-166",
       "date": "2027-02-09",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -1684,7 +1654,7 @@
       "cycleNumber": 7
     },
     {
-      "id": "event-170",
+      "id": "event-167",
       "date": "2027-02-10",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -1694,7 +1664,7 @@
       "cycleNumber": 7
     },
     {
-      "id": "event-171",
+      "id": "event-168",
       "date": "2027-02-10",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -1706,7 +1676,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-172",
+      "id": "event-169",
+      "date": "2027-02-11",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 18,
+      "cycle": 2,
+      "cycleNumber": 9
+    },
+    {
+      "id": "event-170",
       "date": "2027-02-11",
       "time": "19:30",
       "title": "Ζεύγη 1-6",
@@ -1718,21 +1698,21 @@
       "simultaneous": false
     },
     {
-      "id": "event-173",
+      "id": "event-171",
       "date": "2027-02-12",
       "time": "",
       "title": "ΠΠ ΖΕΥΓΩΝ ΤΕΛΙΚΟΣ",
       "category": "external"
     },
     {
-      "id": "event-174",
+      "id": "event-172",
       "date": "2027-02-13",
       "time": "",
       "title": "ΠΠ ΖΕΥΓΩΝ ΤΕΛΙΚΟΣ",
       "category": "external"
     },
     {
-      "id": "event-175",
+      "id": "event-173",
       "date": "2027-02-14",
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
@@ -1744,14 +1724,14 @@
       "simultaneous": false
     },
     {
-      "id": "event-176",
+      "id": "event-174",
       "date": "2027-02-14",
       "time": "",
       "title": "ΠΠ ΖΕΥΓΩΝ ΤΕΛΙΚΟΣ",
       "category": "external"
     },
     {
-      "id": "event-177",
+      "id": "event-175",
       "date": "2027-02-15",
       "time": "19:00",
       "title": "Προχωρημένοι",
@@ -1761,7 +1741,7 @@
       "cycleNumber": 12
     },
     {
-      "id": "event-178",
+      "id": "event-176",
       "date": "2027-02-15",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -1773,7 +1753,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-179",
+      "id": "event-177",
       "date": "2027-02-16",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -1783,17 +1763,7 @@
       "cycleNumber": 2
     },
     {
-      "id": "event-180",
-      "date": "2027-02-16",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 21,
-      "cycle": 3,
-      "cycleNumber": 2
-    },
-    {
-      "id": "event-181",
+      "id": "event-178",
       "date": "2027-02-16",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -1803,7 +1773,7 @@
       "cycleNumber": 8
     },
     {
-      "id": "event-182",
+      "id": "event-179",
       "date": "2027-02-17",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -1813,7 +1783,7 @@
       "cycleNumber": 8
     },
     {
-      "id": "event-183",
+      "id": "event-180",
       "date": "2027-02-17",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -1825,7 +1795,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-184",
+      "id": "event-181",
+      "date": "2027-02-18",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 19,
+      "cycle": 2,
+      "cycleNumber": 10
+    },
+    {
+      "id": "event-182",
       "date": "2027-02-18",
       "time": "19:30",
       "title": "ΠΠΟ Προκριματικά 1-6 & 1-9",
@@ -1834,7 +1814,7 @@
       "total": 3
     },
     {
-      "id": "event-185",
+      "id": "event-183",
       "date": "2027-02-19",
       "time": "20:30",
       "title": "ΠΠΟ Προκριματικά 1-6 & 1-9",
@@ -1843,7 +1823,7 @@
       "total": 3
     },
     {
-      "id": "event-186",
+      "id": "event-184",
       "date": "2027-02-20",
       "time": "18:30",
       "title": "3η Μαθητική Ταυτόχρονο",
@@ -1852,7 +1832,7 @@
       "total": 1
     },
     {
-      "id": "event-187",
+      "id": "event-185",
       "date": "2027-02-21",
       "time": "10:30",
       "title": "ΠΠΟ Προκριματικά 1-6 & 1-9",
@@ -1861,7 +1841,7 @@
       "total": 3
     },
     {
-      "id": "event-188",
+      "id": "event-186",
       "date": "2027-02-21",
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
@@ -1873,7 +1853,7 @@
       "simultaneous": false
     },
     {
-      "id": "event-189",
+      "id": "event-187",
       "date": "2027-02-22",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -1885,7 +1865,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-190",
+      "id": "event-188",
       "date": "2027-02-23",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -1895,17 +1875,7 @@
       "cycleNumber": 3
     },
     {
-      "id": "event-191",
-      "date": "2027-02-23",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 22,
-      "cycle": 3,
-      "cycleNumber": 3
-    },
-    {
-      "id": "event-192",
+      "id": "event-189",
       "date": "2027-02-23",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -1915,7 +1885,7 @@
       "cycleNumber": 9
     },
     {
-      "id": "event-193",
+      "id": "event-190",
       "date": "2027-02-24",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -1925,7 +1895,7 @@
       "cycleNumber": 9
     },
     {
-      "id": "event-194",
+      "id": "event-191",
       "date": "2027-02-24",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -1937,7 +1907,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-195",
+      "id": "event-192",
+      "date": "2027-02-25",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 20,
+      "cycle": 3,
+      "cycleNumber": 1
+    },
+    {
+      "id": "event-193",
       "date": "2027-02-25",
       "time": "19:30",
       "title": "Ζεύγη 1-6",
@@ -1949,7 +1929,7 @@
       "simultaneous": false
     },
     {
-      "id": "event-196",
+      "id": "event-194",
       "date": "2027-02-26",
       "time": "20:30",
       "title": "ΠΠΟ Προκριματικά 1-11 & 1-16",
@@ -1958,14 +1938,14 @@
       "total": 3
     },
     {
-      "id": "event-197",
+      "id": "event-195",
       "date": "2027-02-26",
       "time": "",
       "title": "ΠΠ ΟΜΑΔΩΝ Προκριματικά",
       "category": "external"
     },
     {
-      "id": "event-198",
+      "id": "event-196",
       "date": "2027-02-27",
       "time": "18:30",
       "title": "ΠΠΟ Προκριματικά 1-11 & 1-16",
@@ -1974,14 +1954,14 @@
       "total": 3
     },
     {
-      "id": "event-199",
+      "id": "event-197",
       "date": "2027-02-27",
       "time": "",
       "title": "ΠΠ ΟΜΑΔΩΝ Προκριματικά",
       "category": "external"
     },
     {
-      "id": "event-200",
+      "id": "event-198",
       "date": "2027-02-28",
       "time": "10:30",
       "title": "ΠΠΟ Προκριματικά 1-11 & 1-16",
@@ -1990,14 +1970,14 @@
       "total": 3
     },
     {
-      "id": "event-201",
+      "id": "event-199",
       "date": "2027-02-28",
       "time": "",
       "title": "ΠΠ ΟΜΑΔΩΝ Προκριματικά",
       "category": "external"
     },
     {
-      "id": "event-202",
+      "id": "event-200",
       "date": "2027-03-01",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -2009,7 +1989,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-203",
+      "id": "event-201",
       "date": "2027-03-02",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -2019,17 +1999,7 @@
       "cycleNumber": 4
     },
     {
-      "id": "event-204",
-      "date": "2027-03-02",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 23,
-      "cycle": 3,
-      "cycleNumber": 4
-    },
-    {
-      "id": "event-205",
+      "id": "event-202",
       "date": "2027-03-02",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -2039,7 +2009,7 @@
       "cycleNumber": 1
     },
     {
-      "id": "event-206",
+      "id": "event-203",
       "date": "2027-03-03",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -2049,7 +2019,7 @@
       "cycleNumber": 1
     },
     {
-      "id": "event-207",
+      "id": "event-204",
       "date": "2027-03-03",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -2061,7 +2031,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-208",
+      "id": "event-205",
+      "date": "2027-03-04",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 21,
+      "cycle": 3,
+      "cycleNumber": 2
+    },
+    {
+      "id": "event-206",
       "date": "2027-03-04",
       "time": "19:30",
       "title": "Ζεύγη 1-6",
@@ -2073,7 +2053,7 @@
       "simultaneous": false
     },
     {
-      "id": "event-209",
+      "id": "event-207",
       "date": "2027-03-07",
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
@@ -2085,7 +2065,7 @@
       "simultaneous": false
     },
     {
-      "id": "event-210",
+      "id": "event-208",
       "date": "2027-03-08",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -2097,7 +2077,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-211",
+      "id": "event-209",
       "date": "2027-03-09",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -2107,17 +2087,7 @@
       "cycleNumber": 5
     },
     {
-      "id": "event-212",
-      "date": "2027-03-09",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 24,
-      "cycle": 3,
-      "cycleNumber": 5
-    },
-    {
-      "id": "event-213",
+      "id": "event-210",
       "date": "2027-03-09",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -2127,7 +2097,7 @@
       "cycleNumber": 2
     },
     {
-      "id": "event-214",
+      "id": "event-211",
       "date": "2027-03-10",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -2137,7 +2107,7 @@
       "cycleNumber": 2
     },
     {
-      "id": "event-215",
+      "id": "event-212",
       "date": "2027-03-10",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -2149,7 +2119,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-216",
+      "id": "event-213",
+      "date": "2027-03-11",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 22,
+      "cycle": 3,
+      "cycleNumber": 3
+    },
+    {
+      "id": "event-214",
       "date": "2027-03-11",
       "time": "19:30",
       "title": "Ζεύγη 1-6",
@@ -2161,28 +2141,28 @@
       "simultaneous": false
     },
     {
-      "id": "event-217",
+      "id": "event-215",
       "date": "2027-03-13",
       "time": "",
       "title": "ΑΠΟΚΡΙΕΣ ΔΙΑΚΟΠΕΣ",
       "category": "holiday"
     },
     {
-      "id": "event-218",
+      "id": "event-216",
       "date": "2027-03-14",
       "time": "",
       "title": "ΑΠΟΚΡΙΕΣ ΔΙΑΚΟΠΕΣ",
       "category": "holiday"
     },
     {
-      "id": "event-219",
+      "id": "event-217",
       "date": "2027-03-15",
       "time": "",
       "title": "Καθαρά Δευτέρα",
       "category": "holiday"
     },
     {
-      "id": "event-220",
+      "id": "event-218",
       "date": "2027-03-16",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -2192,17 +2172,7 @@
       "cycleNumber": 6
     },
     {
-      "id": "event-221",
-      "date": "2027-03-16",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 25,
-      "cycle": 3,
-      "cycleNumber": 6
-    },
-    {
-      "id": "event-222",
+      "id": "event-219",
       "date": "2027-03-16",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -2212,7 +2182,7 @@
       "cycleNumber": 3
     },
     {
-      "id": "event-223",
+      "id": "event-220",
       "date": "2027-03-17",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -2222,7 +2192,7 @@
       "cycleNumber": 3
     },
     {
-      "id": "event-224",
+      "id": "event-221",
       "date": "2027-03-17",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -2234,7 +2204,17 @@
       "simultaneous": true
     },
     {
-      "id": "event-225",
+      "id": "event-222",
+      "date": "2027-03-18",
+      "time": "17:20",
+      "title": "Β ΕΤΟΣ 2",
+      "category": "lesson",
+      "number": 23,
+      "cycle": 3,
+      "cycleNumber": 4
+    },
+    {
+      "id": "event-223",
       "date": "2027-03-18",
       "time": "19:30",
       "title": "Ζεύγη 1-6",
@@ -2246,21 +2226,21 @@
       "simultaneous": false
     },
     {
-      "id": "event-226",
+      "id": "event-224",
       "date": "2027-03-19",
       "time": "",
       "title": "ΠΠ ΟΜΑΔΩΝ ΤΕΛΙΚΟΣ",
       "category": "external"
     },
     {
-      "id": "event-227",
+      "id": "event-225",
       "date": "2027-03-20",
       "time": "",
       "title": "ΠΠ ΟΜΑΔΩΝ ΤΕΛΙΚΟΣ",
       "category": "external"
     },
     {
-      "id": "event-228",
+      "id": "event-226",
       "date": "2027-03-21",
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
@@ -2272,14 +2252,14 @@
       "simultaneous": false
     },
     {
-      "id": "event-229",
+      "id": "event-227",
       "date": "2027-03-21",
       "time": "",
       "title": "ΠΠ ΟΜΑΔΩΝ ΤΕΛΙΚΟΣ",
       "category": "external"
     },
     {
-      "id": "event-230",
+      "id": "event-228",
       "date": "2027-03-22",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -2291,7 +2271,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-231",
+      "id": "event-229",
       "date": "2027-03-23",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -2301,17 +2281,7 @@
       "cycleNumber": 7
     },
     {
-      "id": "event-232",
-      "date": "2027-03-23",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 26,
-      "cycle": 3,
-      "cycleNumber": 7
-    },
-    {
-      "id": "event-233",
+      "id": "event-230",
       "date": "2027-03-23",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -2321,7 +2291,7 @@
       "cycleNumber": 4
     },
     {
-      "id": "event-234",
+      "id": "event-231",
       "date": "2027-03-24",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -2331,7 +2301,7 @@
       "cycleNumber": 4
     },
     {
-      "id": "event-235",
+      "id": "event-232",
       "date": "2027-03-24",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
@@ -2343,28 +2313,28 @@
       "simultaneous": true
     },
     {
-      "id": "event-236",
+      "id": "event-233",
       "date": "2027-03-25",
       "time": "",
       "title": "25η Μαρτίου",
       "category": "holiday"
     },
     {
-      "id": "event-237",
+      "id": "event-234",
       "date": "2027-03-25",
       "time": "",
       "title": "ΦΕΣΤΙΒΑΛ ΚΑΛΑΜΑΤΑΣ",
       "category": "external"
     },
     {
-      "id": "event-238",
+      "id": "event-235",
       "date": "2027-03-26",
       "time": "",
       "title": "ΦΕΣΤΙΒΑΛ ΚΑΛΑΜΑΤΑΣ",
       "category": "external"
     },
     {
-      "id": "event-239",
+      "id": "event-236",
       "date": "2027-03-27",
       "time": "18:30",
       "title": "4η Μαθητική Ταυτόχρονο",
@@ -2373,14 +2343,14 @@
       "total": 1
     },
     {
-      "id": "event-240",
+      "id": "event-237",
       "date": "2027-03-27",
       "time": "",
       "title": "ΦΕΣΤΙΒΑΛ ΚΑΛΑΜΑΤΑΣ",
       "category": "external"
     },
     {
-      "id": "event-241",
+      "id": "event-238",
       "date": "2027-03-28",
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
@@ -2392,14 +2362,14 @@
       "simultaneous": false
     },
     {
-      "id": "event-242",
+      "id": "event-239",
       "date": "2027-03-28",
       "time": "",
       "title": "ΦΕΣΤΙΒΑΛ ΚΑΛΑΜΑΤΑΣ",
       "category": "external"
     },
     {
-      "id": "event-243",
+      "id": "event-240",
       "date": "2027-03-29",
       "time": "20:00",
       "title": "Ζεύγη 1-9",
@@ -2411,7 +2381,7 @@
       "simultaneous": true
     },
     {
-      "id": "event-244",
+      "id": "event-241",
       "date": "2027-03-30",
       "time": "17:20",
       "title": "Β ΕΤΟΣ 1",
@@ -2421,17 +2391,7 @@
       "cycleNumber": 8
     },
     {
-      "id": "event-245",
-      "date": "2027-03-30",
-      "time": "17:20",
-      "title": "Β ΕΤΟΣ 2",
-      "category": "lesson",
-      "number": 27,
-      "cycle": 3,
-      "cycleNumber": 8
-    },
-    {
-      "id": "event-246",
+      "id": "event-242",
       "date": "2027-03-30",
       "time": "20:45",
       "title": "Αρχάριοι 1",
@@ -2441,7 +2401,7 @@
       "cycleNumber": 5
     },
     {
-      "id": "event-247",
+      "id": "event-243",
       "date": "2027-03-31",
       "time": "17:30",
       "title": "Αρχάριοι 2",
@@ -2451,7 +2411,7 @@
       "cycleNumber": 5
     },
     {
-      "id": "event-248",
+      "id": "event-244",
       "date": "2027-03-31",
       "time": "20:00",
       "title": "Ζεύγη Όπεν",
