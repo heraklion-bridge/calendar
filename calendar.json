@@ -1,0 +1,38 @@
+{
+  "format": "omh-calendar-public",
+  "version": 1,
+  "cutoff": "2026-12-31",
+  "events": [
+    {
+      "id": "demo-1",
+      "date": "2026-11-25",
+      "time": "20:00",
+      "title": "ΔΟΚΙΜΗ — Ζεύγη Όπεν",
+      "category": "reg",
+      "number": 1,
+      "group": 1,
+      "groupTotal": 6,
+      "independent": false,
+      "simultaneous": false
+    },
+    {
+      "id": "demo-2",
+      "date": "2026-11-26",
+      "time": "17:30",
+      "title": "ΔΟΚΙΜΗ — Μάθημα",
+      "category": "lesson",
+      "number": 1,
+      "cycle": 1,
+      "cycleNumber": 1
+    },
+    {
+      "id": "demo-3",
+      "date": "2026-11-29",
+      "time": "19:30",
+      "title": "ΔΟΚΙΜΗ — Έκτακτη ημερίδα",
+      "category": "special",
+      "number": 1,
+      "total": 1
+    }
+  ]
+}
