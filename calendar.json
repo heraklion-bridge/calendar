@@ -211,7 +211,7 @@
       "category": "reg",
       "number": 1,
       "group": 1,
-      "groupTotal": 6,
+      "groupTotal": 5,
       "independent": false,
       "simultaneous": false
     },
@@ -310,7 +310,7 @@
       "category": "reg",
       "number": 2,
       "group": 1,
-      "groupTotal": 6,
+      "groupTotal": 5,
       "independent": false,
       "simultaneous": false
     },
@@ -509,7 +509,7 @@
       "category": "reg",
       "number": 3,
       "group": 1,
-      "groupTotal": 6,
+      "groupTotal": 5,
       "independent": false,
       "simultaneous": false
     },
@@ -605,10 +605,7 @@
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
       "category": "reg",
-      "number": 4,
-      "group": 1,
-      "groupTotal": 6,
-      "independent": false,
+      "independent": true,
       "simultaneous": false
     },
     {
@@ -703,9 +700,9 @@
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
       "category": "reg",
-      "number": 5,
+      "number": 4,
       "group": 1,
-      "groupTotal": 6,
+      "groupTotal": 5,
       "independent": false,
       "simultaneous": false
     },
@@ -917,9 +914,9 @@
       "time": "19:30",
       "title": "Ζεύγη Όπεν",
       "category": "reg",
-      "number": 6,
+      "number": 5,
       "group": 1,
-      "groupTotal": 6,
+      "groupTotal": 5,
       "independent": false,
       "simultaneous": false
     },
